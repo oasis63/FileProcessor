@@ -8,6 +8,7 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"time"
 
@@ -42,6 +43,9 @@ func NewStorageManager(baseDir string, retentionMins int) (*StorageManager, erro
 func (sm *StorageManager) SaveUploadedFile(r io.Reader, filename string) (string, string, int64, error) {
 	fileID := uuid.New().String()
 	ext := filepath.Ext(filename)
+	if ext == "" {
+		ext = ".bin"
+	}
 	storedName := fmt.Sprintf("%s%s", fileID, ext)
 	targetPath := filepath.Join(sm.baseDir, storedName)
 
@@ -66,6 +70,9 @@ func (sm *StorageManager) SaveUploadedFile(r io.Reader, filename string) (string
 
 func (sm *StorageManager) CreateTempFile(prefix, ext string) (string, error) {
 	fileID := uuid.New().String()
+	if ext == "" {
+		ext = ".tmp"
+	}
 	storedName := fmt.Sprintf("%s_%s%s", prefix, fileID, ext)
 	targetPath := filepath.Join(sm.baseDir, storedName)
 
@@ -74,6 +81,23 @@ func (sm *StorageManager) CreateTempFile(prefix, ext string) (string, error) {
 	sm.mu.Unlock()
 
 	return targetPath, nil
+}
+
+func (sm *StorageManager) GetFilePathByID(fileID string) (string, error) {
+	sm.mu.RLock()
+	defer sm.mu.RUnlock()
+
+	entries, err := os.ReadDir(sm.baseDir)
+	if err != nil {
+		return "", err
+	}
+
+	for _, entry := range entries {
+		if strings.HasPrefix(entry.Name(), fileID) {
+			return filepath.Join(sm.baseDir, entry.Name()), nil
+		}
+	}
+	return "", fmt.Errorf("file not found for ID: %s", fileID)
 }
 
 func (sm *StorageManager) GetFilePath(storedName string) (string, error) {
@@ -106,7 +130,6 @@ func (sm *StorageManager) VerifyDownloadToken(token string) (string, bool) {
 		return "", false
 	}
 
-	// Simple validation
 	if time.Now().Unix() > expiresAt {
 		return "", false
 	}

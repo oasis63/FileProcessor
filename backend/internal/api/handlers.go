@@ -111,7 +111,7 @@ func (h *APIHandler) UploadFile(w http.ResponseWriter, r *http.Request) {
 }
 
 type CreateJobPayload struct {
-	ToolID  string           `json:"toolId"`
+	ToolID  string                `json:"toolId"`
 	Files   []models.FileMetadata `json:"files"`
 	Options models.JobOptions     `json:"options"`
 }
@@ -126,6 +126,18 @@ func (h *APIHandler) CreateJob(w http.ResponseWriter, r *http.Request) {
 	if payload.ToolID == "" || len(payload.Files) == 0 {
 		respondError(w, http.StatusBadRequest, "INVALID_JOB", "toolId and files are required")
 		return
+	}
+
+	// Resolve StoredPath for each input file from storage manager using file ID
+	for i := range payload.Files {
+		if payload.Files[i].StoredPath == "" {
+			storedPath, err := h.storage.GetFilePathByID(payload.Files[i].ID)
+			if err != nil {
+				respondError(w, http.StatusBadRequest, "FILE_NOT_FOUND", fmt.Sprintf("File %s not found on storage server", payload.Files[i].ID))
+				return
+			}
+			payload.Files[i].StoredPath = storedPath
+		}
 	}
 
 	job, err := h.jobMgr.CreateJob(payload.ToolID, payload.Files, payload.Options)

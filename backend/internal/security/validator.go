@@ -17,7 +17,8 @@ var (
 	ErrInvalidFileName  = errors.New("invalid file name")
 )
 
-var safeFilenameRegex = regexp.MustCompile(`^[a-zA-Z0-9_\-\.]+$`)
+// Match any character that is NOT alphanumeric, underscore, hyphen, or dot
+var unsafeFilenameRegex = regexp.MustCompile(`[^a-zA-Z0-9_\-\.]`)
 
 // ValidateMagicBytes verifies the actual binary content of a file using HTTP sniff.
 func ValidateMagicBytes(filePath string, allowedFormats []string) (string, error) {
@@ -61,7 +62,6 @@ func ValidateMagicBytes(filePath string, allowedFormats []string) (string, error
 				matched = true
 			}
 		case "heic":
-			// HEIC files often start with ftypheic or ftypmsf1
 			if contentType == "image/heic" || contentType == "image/heif" || strings.Contains(contentType, "octet-stream") {
 				matched = true
 			}
@@ -75,13 +75,13 @@ func ValidateMagicBytes(filePath string, allowedFormats []string) (string, error
 	return contentType, nil
 }
 
-// SanitizeFilename prevents path traversal and shell injection
+// SanitizeFilename prevents path traversal and shell injection while preserving extensions.
 func SanitizeFilename(name string) string {
 	base := filepath.Base(name)
 	base = strings.ReplaceAll(base, " ", "_")
-	cleaned := safeFilenameRegex.ReplaceAllString(base, "_")
+	cleaned := unsafeFilenameRegex.ReplaceAllString(base, "_")
 	if cleaned == "" || cleaned == "." || cleaned == ".." {
-		return "unnamed_file"
+		return "unnamed_file.bin"
 	}
 	return cleaned
 }

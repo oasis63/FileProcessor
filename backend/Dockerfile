@@ -11,6 +11,17 @@ FROM alpine:latest
 
 RUN apk add --no-cache \
     imagemagick \
+    imagemagick-jpeg \
+    imagemagick-webp \
+    imagemagick-heic \
+    imagemagick-pdf \
+    imagemagick-tiff \
+    imagemagick-jp2 \
+    imagemagick-svg \
+    libjpeg-turbo \
+    libwebp \
+    libheif \
+    libheif-plugins-all \
     ghostscript \
     poppler-utils \
     zip \

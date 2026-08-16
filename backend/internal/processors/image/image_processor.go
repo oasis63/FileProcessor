@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/fileprocessor/backend/internal/models"
 	"github.com/fileprocessor/backend/internal/storage"
@@ -49,6 +48,17 @@ func (ip *ImageProcessor) Process(ctx context.Context, job *models.Job) (*models
 	}
 }
 
+func getSafeExtension(path string) string {
+	ext := strings.ToLower(filepath.Ext(path))
+	if ext == "" || ext == "." {
+		return ".jpg"
+	}
+	if ext == ".jpeg" {
+		return ".jpg"
+	}
+	return ext
+}
+
 // Compress reduces image quality and strips EXIF metadata.
 func (ip *ImageProcessor) Compress(ctx context.Context, input models.FileMetadata, options models.JobOptions) (*models.FileMetadata, error) {
 	quality := 75
@@ -56,13 +66,12 @@ func (ip *ImageProcessor) Compress(ctx context.Context, input models.FileMetadat
 		quality = int(q)
 	}
 
-	ext := filepath.Ext(input.StoredPath)
+	ext := getSafeExtension(input.StoredPath)
 	outPath, err := ip.storage.CreateTempFile("compressed", ext)
 	if err != nil {
 		return nil, err
 	}
 
-	// magick convert input -strip -quality quality outPath
 	cmd := exec.CommandContext(ctx, "magick", input.StoredPath, "-strip", "-quality", strconv.Itoa(quality), outPath)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
@@ -90,7 +99,7 @@ func (ip *ImageProcessor) TargetSize(ctx context.Context, input models.FileMetad
 		targetBytes = int64(tb)
 	}
 
-	ext := filepath.Ext(input.StoredPath)
+	ext := getSafeExtension(input.StoredPath)
 	bestPath := ""
 	var bestSize int64 = 0
 
@@ -164,7 +173,7 @@ func (ip *ImageProcessor) Resize(ctx context.Context, input models.FileMetadata,
 	}
 
 	geometry := fmt.Sprintf("%dx%d", width, height)
-	ext := filepath.Ext(input.StoredPath)
+	ext := getSafeExtension(input.StoredPath)
 	outPath, err := ip.storage.CreateTempFile("resized", ext)
 	if err != nil {
 		return nil, err
@@ -191,13 +200,25 @@ func (ip *ImageProcessor) Resize(ctx context.Context, input models.FileMetadata,
 
 // Crop extracts rectangular slice.
 func (ip *ImageProcessor) Crop(ctx context.Context, input models.FileMetadata, options models.JobOptions) (*models.FileMetadata, error) {
-	width := int(options["width"].(float64))
-	height := int(options["height"].(float64))
-	x := int(options["x"].(float64))
-	y := int(options["y"].(float64))
+	width := 800
+	if w, ok := options["width"].(float64); ok && w > 0 {
+		width = int(w)
+	}
+	height := 600
+	if h, ok := options["height"].(float64); ok && h > 0 {
+		height = int(h)
+	}
+	x := 0
+	if xv, ok := options["x"].(float64); ok {
+		x = int(xv)
+	}
+	y := 0
+	if yv, ok := options["y"].(float64); ok {
+		y = int(yv)
+	}
 
 	geometry := fmt.Sprintf("%dx%d+%d+%d", width, height, x, y)
-	ext := filepath.Ext(input.StoredPath)
+	ext := getSafeExtension(input.StoredPath)
 	outPath, err := ip.storage.CreateTempFile("cropped", ext)
 	if err != nil {
 		return nil, err
@@ -261,7 +282,7 @@ func (ip *ImageProcessor) ConvertFormat(ctx context.Context, input models.FileMe
 
 // RemoveMetadata strips EXIF/IPTC tags.
 func (ip *ImageProcessor) RemoveMetadata(ctx context.Context, input models.FileMetadata) (*models.FileMetadata, error) {
-	ext := filepath.Ext(input.StoredPath)
+	ext := getSafeExtension(input.StoredPath)
 	outPath, err := ip.storage.CreateTempFile("clean", ext)
 	if err != nil {
 		return nil, err
@@ -317,6 +338,3 @@ func (ip *ImageProcessor) ImageToPDF(ctx context.Context, inputs []models.FileMe
 		SizeBytes:   fi.Size(),
 	}, nil
 }
-
-// Ensure interface compliance
-var _ = time.Second
