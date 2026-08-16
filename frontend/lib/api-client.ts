@@ -1,6 +1,6 @@
 import { FileMetadata, Job, Tool } from '@/types';
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api/v1';
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'https://fileprocessor-cav6.onrender.com/api/v1';
 
 export async function getTools(): Promise<Tool[]> {
   try {
