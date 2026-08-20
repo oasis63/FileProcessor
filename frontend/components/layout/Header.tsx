@@ -5,13 +5,18 @@ import Link from 'next/link';
 import { FileText, Image, Video, Moon, Sun, Menu, X, Zap } from 'lucide-react';
 
 export function Header() {
-  const [darkMode, setDarkMode] = useState(true);
+  const [darkMode, setDarkMode] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const toggleDarkMode = () => {
-    setDarkMode(!darkMode);
+    const nextMode = !darkMode;
+    setDarkMode(nextMode);
     if (typeof document !== 'undefined') {
-      document.documentElement.classList.toggle('dark');
+      if (nextMode) {
+        document.documentElement.classList.add('dark');
+      } else {
+        document.documentElement.classList.remove('dark');
+      }
     }
   };
 
