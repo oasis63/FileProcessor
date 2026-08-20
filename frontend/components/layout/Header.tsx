@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { FileText, Image, Video, Headphones, Moon, Sun, Menu, X, Zap } from 'lucide-react';
+import { FileText, Image, Video, Moon, Sun, Menu, X, Zap } from 'lucide-react';
 
 export function Header() {
   const [darkMode, setDarkMode] = useState(true);
@@ -38,9 +38,6 @@ export function Header() {
           </Link>
           <Link href="/#media-tools" className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-2 transition-colors">
             <Video className="w-4 h-4" /> Media Tools
-          </Link>
-          <Link href="/video-to-audio" className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-2 transition-colors">
-            <Headphones className="w-4 h-4" /> Video to Audio
           </Link>
         </nav>
 
@@ -81,9 +78,6 @@ export function Header() {
           </Link>
           <Link href="/#media-tools" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-base font-medium text-gray-700 dark:text-gray-200">
             Media Tools
-          </Link>
-          <Link href="/video-to-audio" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-base font-medium text-gray-700 dark:text-gray-200">
-            Video to Audio
           </Link>
         </div>
       )}
