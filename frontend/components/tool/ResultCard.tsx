@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { CheckCircle2, Download, ArrowRight, Sparkles, RefreshCw } from 'lucide-react';
+import { CheckCircle2, Download, ArrowRight, RefreshCw } from 'lucide-react';
 import { formatBytes } from '@/lib/utils';
 import { Job } from '@/types';
 import { getDownloadUrl } from '@/lib/api-client';
@@ -34,49 +34,46 @@ export function ResultCard({ job, onReset, nextActions }: ResultCardProps) {
   const actions = nextActions || defaultNextActions;
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-6 sm:p-8 rounded-3xl border border-emerald-500/20 bg-emerald-50/20 dark:bg-emerald-950/10 backdrop-blur-xl shadow-2xl space-y-6">
-      {/* Header */}
-      <div className="flex items-center space-x-3 text-emerald-600 dark:text-emerald-400">
-        <CheckCircle2 className="w-8 h-8 flex-shrink-0 animate-bounce" />
+    <div className="w-full max-w-2xl mx-auto p-6 sm:p-8 rounded-md border border-paper-line dark:border-night-border bg-paper-raised dark:bg-night-raised space-y-6">
+      <div className="flex items-center space-x-3 text-brand-700 dark:text-brand-400">
+        <CheckCircle2 className="w-7 h-7 flex-shrink-0" />
         <div>
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white">Processing Complete!</h3>
-          <p className="text-xs text-gray-500 dark:text-gray-400">Your output file is ready for download</p>
+          <h3 className="font-display text-xl text-ink dark:text-paper">Ready to download</h3>
+          <p className="text-sm text-ink-muted dark:text-paper/60">The processed file is available for one hour</p>
         </div>
       </div>
 
-      {/* Metrics Row */}
-      <div className="grid grid-cols-3 gap-4 p-4 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 text-center">
+      <div className="grid grid-cols-3 gap-4 p-4 rounded-md bg-paper dark:bg-night border border-paper-line dark:border-night-border text-center">
         <div>
-          <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Original</p>
-          <p className="text-lg font-bold text-gray-800 dark:text-gray-200 mt-1">{origSizeStr}</p>
+          <p className="text-xs text-ink-faint font-medium">Original</p>
+          <p className="text-lg font-semibold text-ink dark:text-paper mt-1">{origSizeStr}</p>
         </div>
         <div>
-          <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Processed</p>
-          <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400 mt-1">{procSizeStr}</p>
+          <p className="text-xs text-ink-faint font-medium">Processed</p>
+          <p className="text-lg font-semibold text-brand-700 dark:text-brand-400 mt-1">{procSizeStr}</p>
         </div>
         <div>
-          <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Savings</p>
-          <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 dark:bg-emerald-900/60 text-emerald-700 dark:text-emerald-300 mt-1">
-            <Sparkles className="w-3 h-3" /> {savingsPct}% Smaller
+          <p className="text-xs text-ink-faint font-medium">Savings</p>
+          <span className="inline-flex items-center px-2 py-1 text-xs font-semibold text-brand-800 dark:text-brand-300 mt-1">
+            {savingsPct}% smaller
           </span>
         </div>
       </div>
 
-      {/* Primary Download Button */}
       <div className="flex flex-col sm:flex-row items-center gap-3">
         <a
           href={downloadUrl}
           download
-          className="w-full flex items-center justify-center gap-2 px-6 py-4 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-base shadow-lg shadow-emerald-600/30 transition-all hover:scale-[1.01] active:scale-[0.99]"
+          className="w-full flex items-center justify-center gap-2 px-6 py-3.5 rounded-md bg-brand-600 hover:bg-brand-700 dark:bg-brand-500 dark:hover:bg-brand-400 text-white font-semibold text-base"
         >
-          <Download className="w-5 h-5" /> Download File
+          <Download className="w-5 h-5" /> Download file
         </a>
 
         <button
           onClick={onReset}
-          className="w-full sm:w-auto px-5 py-4 rounded-2xl border border-gray-300 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-900 text-gray-700 dark:text-gray-300 font-semibold text-sm flex items-center justify-center gap-2 transition-colors"
+          className="w-full sm:w-auto px-5 py-3.5 rounded-md border border-paper-line dark:border-night-border hover:bg-paper-muted dark:hover:bg-night text-ink dark:text-paper font-semibold text-sm flex items-center justify-center gap-2"
         >
-          <RefreshCw className="w-4 h-4" /> Start Over
+          <RefreshCw className="w-4 h-4" /> Start over
         </button>
       </div>
 

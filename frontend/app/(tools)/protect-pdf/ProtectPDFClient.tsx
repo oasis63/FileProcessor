@@ -13,7 +13,7 @@ export function ProtectPDFClient() {
           placeholder="Enter secure password"
           value={options.password || ''}
           onChange={(e) => setOptions({ ...options, password: e.target.value })}
-          className="w-full px-3 py-2.5 rounded-xl border border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-medium focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+          className="w-full px-3 py-2.5 rounded-xl border border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-medium focus:ring-2 focus:ring-brand-600 outline-none text-sm"
         />
       </div>
     );

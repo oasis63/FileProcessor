@@ -1,13 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
-  <defs>
-    <linearGradient id="fileprocessor-icon-grad" x1="0%" y1="100%" x2="100%" y2="0%">
-      <stop offset="0%" stop-color="#2563eb" />
-      <stop offset="100%" stop-color="#06b6d4" />
-    </linearGradient>
-    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-color="#000000" flood-opacity="0.25" />
-    </filter>
-  </defs>
-  <rect width="32" height="32" rx="8" fill="url(#fileprocessor-icon-grad)" />
-  <path d="M17.5 5L8.5 17H15L14.5 27L23.5 15H17L17.5 5Z" fill="#ffffff" filter="url(#glow)" />
+  <rect width="32" height="32" rx="3" fill="#2F5D6A" />
+  <path d="M9 8h9.5L23 13.5V24H9V8Z" fill="#FFFFFF" />
+  <path d="M18.5 8V13.5H23" fill="#E8EAED" />
+  <path d="M12 17h8M12 20.5h5.5" stroke="#2F5D6A" stroke-width="1.6" stroke-linecap="square" />
 </svg>

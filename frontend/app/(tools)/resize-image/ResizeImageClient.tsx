@@ -23,7 +23,7 @@ export function ResizeImageClient() {
                 onClick={() => setOptions({ ...options, width: p.w, height: p.h })}
                 className={`p-3 rounded-xl border text-left transition-all ${
                   options.width === p.w && options.height === p.h
-                    ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 font-semibold'
+                    ? 'border-brand-600 bg-brand-50/50 dark:bg-brand-950/30 text-brand-700 dark:text-brand-400 font-semibold'
                     : 'border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                 }`}
               >
@@ -42,7 +42,7 @@ export function ResizeImageClient() {
               type="number"
               value={options.width || 1920}
               onChange={(e) => setOptions({ ...options, width: parseInt(e.target.value) || 0 })}
-              className="w-full px-3 py-2 rounded-xl border border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-medium focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full px-3 py-2 rounded-xl border border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-medium focus:ring-2 focus:ring-brand-600 outline-none"
             />
           </div>
           <div>
@@ -51,7 +51,7 @@ export function ResizeImageClient() {
               type="number"
               value={options.height || 1080}
               onChange={(e) => setOptions({ ...options, height: parseInt(e.target.value) || 0 })}
-              className="w-full px-3 py-2 rounded-xl border border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-medium focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full px-3 py-2 rounded-xl border border-gray-300 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-medium focus:ring-2 focus:ring-brand-600 outline-none"
             />
           </div>
         </div>

@@ -1,8 +1,15 @@
 import type { Metadata } from 'next';
+import { Source_Sans_3 } from 'next/font/google';
 import '@/styles/globals.css';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { SITE_URL, SITE_NAME } from '@/lib/seo';
+
+const sans = Source_Sans_3({
+  subsets: ['latin'],
+  variable: '--font-sans',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -61,8 +68,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="min-h-screen flex flex-col bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 antialiased selection:bg-blue-500 selection:text-white">
+    <html lang="en" className={sans.variable}>
+      <body className="min-h-screen flex flex-col bg-paper dark:bg-night text-ink dark:text-paper font-sans antialiased">
         <Header />
         <main className="flex-grow">{children}</main>
         <Footer />

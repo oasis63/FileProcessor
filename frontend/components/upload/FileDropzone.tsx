@@ -76,7 +76,7 @@ export function FileDropzone({
 
   const getFileIcon = (file: File) => {
     if (file.type.includes('pdf')) return <FileText className="w-6 h-6 text-red-500" />;
-    if (file.type.includes('image')) return <ImageIcon className="w-6 h-6 text-blue-500" />;
+    if (file.type.includes('image')) return <ImageIcon className="w-6 h-6 text-brand-600" />;
     if (file.type.includes('video') || /\.(mp4|mov|avi|mkv|webm|flv|wmv|3gp)$/i.test(file.name)) return <Video className="w-6 h-6 text-purple-500" />;
     if (file.type.includes('audio') || /\.(mp3|wav|aac|m4a|ogg|flac)$/i.test(file.name)) return <Headphones className="w-6 h-6 text-emerald-500" />;
     return <File className="w-6 h-6 text-gray-400" />;
@@ -90,10 +90,10 @@ export function FileDropzone({
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         onClick={() => !disabled && inputRef.current?.click()}
-        className={`relative group cursor-pointer border-2 border-dashed rounded-2xl p-8 sm:p-12 text-center transition-all duration-200 ${
+        className={`relative group cursor-pointer border border-dashed rounded-md p-8 sm:p-11 text-center ${
           isDragOver
-            ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-950/30 scale-[1.01]'
-            : 'border-gray-300 dark:border-gray-800 hover:border-blue-400 dark:hover:border-blue-500 bg-gray-50/50 dark:bg-gray-900/50'
+            ? 'border-brand-500 bg-brand-50 dark:bg-night dark:border-brand-400'
+            : 'border-paper-line dark:border-night-border hover:border-brand-500 bg-paper-raised dark:bg-night-raised'
         } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
       >
         <input
@@ -107,16 +107,16 @@ export function FileDropzone({
         />
 
         <div className="flex flex-col items-center justify-center space-y-4">
-          <div className="w-16 h-16 rounded-2xl bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center shadow-inner group-hover:scale-110 transition-transform">
-            <UploadCloud className="w-8 h-8" />
+          <div className="w-12 h-12 rounded-md bg-brand-50 dark:bg-night text-brand-700 dark:text-brand-300 border border-paper-line dark:border-night-border flex items-center justify-center">
+            <UploadCloud className="w-6 h-6" />
           </div>
 
           <div>
-            <p className="text-base font-semibold text-gray-900 dark:text-gray-100">
-              Drop your file here, or <span className="text-blue-600 dark:text-blue-400 underline">browse</span>
+            <p className="text-base font-semibold text-ink dark:text-paper">
+              Drop a file here, or <span className="text-brand-700 dark:text-brand-300 underline underline-offset-2">browse</span>
             </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              Supports PDF, JPG, PNG, WebP, MP4, MOV, MKV (Up to {maxSizeMB} MB)
+            <p className="text-sm text-ink-muted dark:text-paper/60 mt-1">
+              PDF, JPG, PNG, WebP, MP4, MOV, MKV — up to {maxSizeMB} MB
             </p>
           </div>
         </div>

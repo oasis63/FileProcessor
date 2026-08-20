@@ -16,7 +16,7 @@ export function CompressPDFClient() {
             onClick={() => setOptions({ ...options, mode: 'preset' })}
             className={`py-2 rounded-lg font-semibold text-xs transition-colors ${
               !isTargetMode
-                ? 'bg-white dark:bg-gray-900 text-blue-600 dark:text-blue-400 shadow-sm'
+                ? 'bg-white dark:bg-gray-900 text-brand-700 dark:text-brand-400 shadow-sm'
                 : 'text-gray-600 dark:text-gray-400'
             }`}
           >
@@ -27,7 +27,7 @@ export function CompressPDFClient() {
             onClick={() => setOptions({ ...options, mode: 'target', targetBytes: 2 * 1024 * 1024 })}
             className={`py-2 rounded-lg font-semibold text-xs transition-colors ${
               isTargetMode
-                ? 'bg-white dark:bg-gray-900 text-blue-600 dark:text-blue-400 shadow-sm'
+                ? 'bg-white dark:bg-gray-900 text-brand-700 dark:text-brand-400 shadow-sm'
                 : 'text-gray-600 dark:text-gray-400'
             }`}
           >
@@ -50,7 +50,7 @@ export function CompressPDFClient() {
                   onClick={() => setOptions({ ...options, preset: item.value })}
                   className={`p-3 rounded-xl border text-left transition-all ${
                     (options.preset || 'ebook') === item.value
-                      ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 font-semibold'
+                      ? 'border-brand-600 bg-brand-50/50 dark:bg-brand-950/30 text-brand-700 dark:text-brand-400 font-semibold'
                       : 'border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300'
                   }`}
                 >
@@ -73,7 +73,7 @@ export function CompressPDFClient() {
                     onClick={() => setOptions({ ...options, targetBytes: bytes })}
                     className={`px-4 py-2 rounded-xl border text-xs font-semibold transition-all ${
                       options.targetBytes === bytes
-                        ? 'border-blue-500 bg-blue-500 text-white'
+                        ? 'border-brand-600 bg-brand-600 text-white'
                         : 'border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
                     }`}
                   >

@@ -137,10 +137,10 @@ export function ToolLayout({
 
       {/* Tool Header */}
       <div className="text-center max-w-2xl mx-auto space-y-3">
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">
+        <h1 className="font-display text-3xl sm:text-4xl font-medium text-ink dark:text-paper tracking-tight">
           {title}
         </h1>
-        <p className="text-base text-gray-600 dark:text-gray-400">
+        <p className="text-base text-ink-muted dark:text-paper/70">
           {description}
         </p>
       </div>
@@ -163,9 +163,9 @@ export function ToolLayout({
 
             {/* Custom Options Panel */}
             {selectedFiles.length > 0 && optionsComponent && (
-              <div className="p-6 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 shadow-sm space-y-4">
-                <h3 className="text-sm font-semibold uppercase tracking-wider text-gray-500 dark:text-gray-400">
-                  Processing Options
+              <div className="p-5 rounded-md border border-paper-line dark:border-night-border bg-paper-raised dark:bg-night-raised space-y-4">
+                <h3 className="text-xs font-semibold uppercase tracking-widest text-ink-faint">
+                  Options
                 </h3>
                 {optionsComponent(options, setOptions)}
               </div>
@@ -183,7 +183,7 @@ export function ToolLayout({
               <button
                 onClick={handleStartProcessing}
                 disabled={isProcessing}
-                className="w-full py-4 px-6 rounded-2xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-base shadow-lg shadow-blue-600/30 flex items-center justify-center gap-2 transition-all hover:scale-[1.005] active:scale-[0.995] disabled:opacity-50"
+                className="w-full py-3.5 px-6 rounded-md bg-brand-600 hover:bg-brand-700 dark:bg-brand-500 dark:hover:bg-brand-400 text-white font-semibold text-base flex items-center justify-center gap-2 disabled:opacity-50"
               >
                 {isProcessing ? (
                   <>
@@ -201,54 +201,48 @@ export function ToolLayout({
       </div>
 
       {/* Trust Badges */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-8 border-t border-gray-200 dark:border-gray-800 text-center">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-8 border-t border-paper-line dark:border-night-border text-center">
         <div className="flex flex-col items-center space-y-1">
-          <Zap className="w-6 h-6 text-blue-500" />
-          <p className="text-xs font-semibold text-gray-900 dark:text-gray-100">Ultra-Fast Processing</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400">Powered by native Go engine</p>
+          <Zap className="w-5 h-5 text-brand-600" />
+          <p className="text-sm font-semibold text-ink dark:text-paper">Fast native processing</p>
+          <p className="text-xs text-ink-muted">Go workers, not a browser script</p>
         </div>
         <div className="flex flex-col items-center space-y-1">
-          <ShieldCheck className="w-6 h-6 text-emerald-500" />
-          <p className="text-xs font-semibold text-gray-900 dark:text-gray-100">100% Secure & Private</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400">Files automatically deleted after 1h</p>
+          <ShieldCheck className="w-5 h-5 text-brand-600" />
+          <p className="text-sm font-semibold text-ink dark:text-paper">Deleted after an hour</p>
+          <p className="text-xs text-ink-muted">Nothing is kept on the server</p>
         </div>
         <div className="flex flex-col items-center space-y-1">
-          <HelpCircle className="w-6 h-6 text-purple-500" />
-          <p className="text-xs font-semibold text-gray-900 dark:text-gray-100">No Account Required</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400">Free forever with zero registration</p>
+          <HelpCircle className="w-5 h-5 text-brand-600" />
+          <p className="text-sm font-semibold text-ink dark:text-paper">No account</p>
+          <p className="text-xs text-ink-muted">Use the tool and download the file</p>
         </div>
       </div>
 
       {/* SEO & FAQ Content */}
       {seoContent && (
-        <div className="pt-12 border-t border-gray-200 dark:border-gray-800 space-y-12">
-          {/* How it works */}
+        <div className="pt-12 border-t border-paper-line dark:border-night-border space-y-12">
           <div className="space-y-6">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">How to {title}</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <h2 className="font-display text-2xl text-ink dark:text-paper">How to {title}</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {seoContent.howItWorks.map((step, i) => (
-                <div key={i} className="p-5 rounded-2xl border border-gray-200 dark:border-gray-800 bg-gray-50/50 dark:bg-gray-900/50 space-y-2">
-                  <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 font-bold flex items-center justify-center text-sm">
-                    {i + 1}
-                  </div>
-                  <h4 className="font-semibold text-sm text-gray-900 dark:text-gray-100">{step.step}</h4>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">{step.text}</p>
+                <div key={i} className="p-5 rounded-md border border-paper-line dark:border-night-border bg-paper-raised dark:bg-night-raised space-y-2">
+                  <div className="text-xs font-semibold text-brand-700 dark:text-brand-400">{i + 1}</div>
+                  <h4 className="font-semibold text-sm text-ink dark:text-paper">{step.step}</h4>
+                  <p className="text-sm text-ink-muted dark:text-paper/60 leading-relaxed">{step.text}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* FAQs */}
-          <div className="space-y-6">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">Frequently Asked Questions</h2>
-            <div className="space-y-4">
-              {seoContent.faqs.map((faq, i) => (
-                <div key={i} className="p-5 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 space-y-1">
-                  <h4 className="font-semibold text-sm text-gray-900 dark:text-gray-100">{faq.q}</h4>
-                  <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed">{faq.a}</p>
-                </div>
-              ))}
-            </div>
+          <div className="space-y-4">
+            <h2 className="font-display text-2xl text-ink dark:text-paper">Questions</h2>
+            {seoContent.faqs.map((faq, i) => (
+              <div key={i} className="p-5 rounded-md border border-paper-line dark:border-night-border bg-paper-raised dark:bg-night-raised space-y-1">
+                <h4 className="font-semibold text-sm text-ink dark:text-paper">{faq.q}</h4>
+                <p className="text-sm text-ink-muted dark:text-paper/60 leading-relaxed">{faq.a}</p>
+              </div>
+            ))}
           </div>
         </div>
       )}

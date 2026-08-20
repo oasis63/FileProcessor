@@ -33,7 +33,7 @@ export function VideoToAudioClient() {
         {/* Output Format Selector */}
         <div className="space-y-3">
           <label className="font-semibold text-gray-800 dark:text-gray-200 text-xs flex items-center gap-1.5">
-            <Music className="w-4 h-4 text-blue-500" /> Audio Format
+            <Music className="w-4 h-4 text-brand-600" /> Audio Format
           </label>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
             {formats.map((fmt) => (
@@ -43,7 +43,7 @@ export function VideoToAudioClient() {
                 onClick={() => setOptions({ ...options, outputFormat: fmt.id })}
                 className={`p-3 rounded-xl border text-left transition-all ${
                   selectedFormat === fmt.id
-                    ? 'border-blue-500 bg-blue-50/60 dark:bg-blue-950/40 text-blue-600 dark:text-blue-400 font-semibold ring-2 ring-blue-500/20'
+                    ? 'border-brand-600 bg-brand-50/60 dark:bg-brand-950/40 text-brand-700 dark:text-brand-400 font-semibold ring-2 ring-brand-600/20'
                     : 'border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/50'
                 }`}
               >
@@ -98,7 +98,7 @@ export function VideoToAudioClient() {
                 placeholder="00:00:00"
                 value={options.startTime || ''}
                 onChange={(e) => setOptions({ ...options, startTime: e.target.value })}
-                className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-mono text-xs focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-mono text-xs focus:ring-2 focus:ring-brand-600 outline-none"
               />
             </div>
             <div>
@@ -110,7 +110,7 @@ export function VideoToAudioClient() {
                 placeholder="00:02:30"
                 value={options.endTime || ''}
                 onChange={(e) => setOptions({ ...options, endTime: e.target.value })}
-                className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-mono text-xs focus:ring-2 focus:ring-blue-500 outline-none"
+                className="w-full px-3 py-2 rounded-xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 text-gray-900 dark:text-white font-mono text-xs focus:ring-2 focus:ring-brand-600 outline-none"
               />
             </div>
           </div>

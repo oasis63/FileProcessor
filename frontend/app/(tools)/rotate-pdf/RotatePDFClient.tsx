@@ -19,7 +19,7 @@ export function RotatePDFClient() {
               onClick={() => setOptions({ ...options, degrees })}
               className={`p-3 rounded-xl border text-center transition-all ${
                 (options.degrees || 90) === degrees
-                  ? 'border-blue-500 bg-blue-50/50 dark:bg-blue-950/30 text-blue-600 dark:text-blue-400 font-semibold'
+                  ? 'border-brand-600 bg-brand-50/50 dark:bg-brand-950/30 text-brand-700 dark:text-brand-400 font-semibold'
                   : 'border-gray-200 dark:border-gray-800 text-gray-700 dark:text-gray-300'
               }`}
             >

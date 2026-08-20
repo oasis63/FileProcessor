@@ -15,7 +15,7 @@ export function CompressImageClient() {
             onClick={() => setOptions({ ...options, mode: 'quality' })}
             className={`py-2 rounded-lg font-semibold text-xs transition-colors ${
               !isTargetMode
-                ? 'bg-white dark:bg-gray-900 text-blue-600 dark:text-blue-400 shadow-sm'
+                ? 'bg-white dark:bg-gray-900 text-brand-700 dark:text-brand-400 shadow-sm'
                 : 'text-gray-600 dark:text-gray-400'
             }`}
           >
@@ -26,7 +26,7 @@ export function CompressImageClient() {
             onClick={() => setOptions({ ...options, mode: 'target', targetBytes: 500 * 1024 })}
             className={`py-2 rounded-lg font-semibold text-xs transition-colors ${
               isTargetMode
-                ? 'bg-white dark:bg-gray-900 text-blue-600 dark:text-blue-400 shadow-sm'
+                ? 'bg-white dark:bg-gray-900 text-brand-700 dark:text-brand-400 shadow-sm'
                 : 'text-gray-600 dark:text-gray-400'
             }`}
           >
@@ -38,7 +38,7 @@ export function CompressImageClient() {
           <div className="space-y-3">
             <div className="flex justify-between items-center text-xs">
               <label className="font-medium text-gray-700 dark:text-gray-300">Image Quality Level</label>
-              <span className="font-bold text-blue-600 dark:text-blue-400">{options.quality || 75}%</span>
+              <span className="font-bold text-brand-700 dark:text-brand-400">{options.quality || 75}%</span>
             </div>
             <input
               type="range"
@@ -47,7 +47,7 @@ export function CompressImageClient() {
               step="5"
               value={options.quality || 75}
               onChange={(e) => setOptions({ ...options, quality: parseInt(e.target.value) })}
-              className="w-full h-2 bg-gray-200 dark:bg-gray-800 rounded-lg appearance-none cursor-pointer accent-blue-600"
+              className="w-full h-2 bg-gray-200 dark:bg-gray-800 rounded-lg appearance-none cursor-pointer accent-brand-700"
             />
             <div className="flex justify-between text-[10px] text-gray-500">
               <span>Smallest file (10%)</span>
@@ -71,7 +71,7 @@ export function CompressImageClient() {
                   onClick={() => setOptions({ ...options, targetBytes: item.bytes })}
                   className={`px-4 py-2 rounded-xl border text-xs font-semibold transition-all ${
                     options.targetBytes === item.bytes
-                      ? 'border-blue-500 bg-blue-500 text-white'
+                      ? 'border-brand-600 bg-brand-600 text-white'
                       : 'border-gray-200 dark:border-gray-800 hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-700 dark:text-gray-300'
                   }`}
                 >
