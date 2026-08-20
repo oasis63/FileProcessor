@@ -35,7 +35,39 @@ func (mp *MediaProcessor) Process(ctx context.Context, job *models.Job) (*models
 	}
 }
 
+func getFFmpegBinaryPath() (string, error) {
+	if custom := os.Getenv("FFMPEG_PATH"); custom != "" {
+		if _, err := os.Stat(custom); err == nil {
+			return custom, nil
+		}
+	}
+
+	if path, err := exec.LookPath("ffmpeg"); err == nil {
+		return path, nil
+	}
+
+	candidates := []string{
+		"/usr/bin/ffmpeg",
+		"/usr/local/bin/ffmpeg",
+		"/opt/homebrew/bin/ffmpeg",
+		"/usr/bin/local/ffmpeg",
+	}
+
+	for _, cand := range candidates {
+		if _, err := os.Stat(cand); err == nil {
+			return cand, nil
+		}
+	}
+
+	return "", fmt.Errorf("ffmpeg binary not found in system PATH or common locations. Please install ffmpeg on your server")
+}
+
 func (mp *MediaProcessor) ExtractAudio(ctx context.Context, input models.FileMetadata, options models.JobOptions) (*models.FileMetadata, error) {
+	ffmpegBin, err := getFFmpegBinaryPath()
+	if err != nil {
+		return nil, err
+	}
+
 	outputFormat := "mp3"
 	if fmtOpt, ok := options["outputFormat"].(string); ok && fmtOpt != "" {
 		outputFormat = strings.ToLower(fmtOpt)
@@ -95,7 +127,7 @@ func (mp *MediaProcessor) ExtractAudio(ctx context.Context, input models.FileMet
 
 	args = append(args, outPath)
 
-	cmd := exec.CommandContext(ctx, "ffmpeg", args...)
+	cmd := exec.CommandContext(ctx, ffmpegBin, args...)
 	var stderr bytes.Buffer
 	cmd.Stderr = &stderr
 

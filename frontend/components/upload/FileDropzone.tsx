@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
-import { UploadCloud, File, X, AlertCircle, FileText, Image as ImageIcon } from 'lucide-react';
+import { UploadCloud, File, X, AlertCircle, FileText, Image as ImageIcon, Video, Headphones } from 'lucide-react';
 import { formatBytes } from '@/lib/utils';
 
 interface FileDropzoneProps {
@@ -77,6 +77,8 @@ export function FileDropzone({
   const getFileIcon = (file: File) => {
     if (file.type.includes('pdf')) return <FileText className="w-6 h-6 text-red-500" />;
     if (file.type.includes('image')) return <ImageIcon className="w-6 h-6 text-blue-500" />;
+    if (file.type.includes('video') || /\.(mp4|mov|avi|mkv|webm|flv|wmv|3gp)$/i.test(file.name)) return <Video className="w-6 h-6 text-purple-500" />;
+    if (file.type.includes('audio') || /\.(mp3|wav|aac|m4a|ogg|flac)$/i.test(file.name)) return <Headphones className="w-6 h-6 text-emerald-500" />;
     return <File className="w-6 h-6 text-gray-400" />;
   };
 
@@ -114,7 +116,7 @@ export function FileDropzone({
               Drop your file here, or <span className="text-blue-600 dark:text-blue-400 underline">browse</span>
             </p>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-              Supports PDF, JPG, PNG, WebP, HEIC (Up to {maxSizeMB} MB)
+              Supports PDF, JPG, PNG, WebP, MP4, MOV, MKV (Up to {maxSizeMB} MB)
             </p>
           </div>
         </div>

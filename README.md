@@ -10,6 +10,7 @@ FileProcessor is an online utility platform engineered with Next.js 15, React 19
 
 - **PDF Engine**: Compress PDF, Target Size Optimization (< 2 MB), Merge PDF, Split PDF, Extract/Delete Pages, Rotate, PDF → JPG, Protect PDF, Remove Metadata.
 - **Image Engine**: Compress Image, Target Image Size (< 500 KB), Resize Image (Presets & Custom), Crop, JPG ↔ PNG ↔ WebP ↔ HEIC conversions, Remove Metadata, Image → PDF.
+- **Media Engine**: Video to Audio conversion (MP4/MOV/MKV → MP3/WAV/AAC/M4A/FLAC/OGG), Bitrate Control, Direct Stream Copy, Timestamp Audio Clipping.
 - **Target Size Optimizer**: Bisection search strategy to reach target file byte limits automatically.
 - **Privacy & Security**: Zero permanent file retention, automatic temp file destruction, magic byte validation, path & command injection protection.
 - **Modern UI/UX**: Dark & Light mode support, responsive drag & drop file upload, comparative savings badges (`Saved 78%`), and workflow next actions.
@@ -22,7 +23,7 @@ FileProcessor is an online utility platform engineered with Next.js 15, React 19
 
 - [Go 1.22+](https://golang.org)
 - [Node.js 20+](https://nodejs.org)
-- Installed dependencies: `ImageMagick (v7)`, `Ghostscript`, `Poppler (pdftoppm)`
+- Installed dependencies: `FFmpeg`, `ImageMagick (v7)`, `Ghostscript`, `Poppler (pdftoppm)`
 
 ### 1. Start Go Backend Server
 

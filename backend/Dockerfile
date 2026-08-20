@@ -10,6 +10,7 @@ RUN CGO_ENABLED=0 GOOS=linux go build -o /app/server ./cmd/server/main.go
 FROM alpine:latest
 
 RUN apk add --no-cache \
+    ffmpeg \
     imagemagick \
     imagemagick-jpeg \
     imagemagick-webp \

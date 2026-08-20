@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { FileStack, Image, FileText, Moon, Sun, Menu, X, Zap } from 'lucide-react';
+import { FileStack, Image, FileText, Moon, Sun, Menu, X, Zap, Video, Headphones } from 'lucide-react';
 
 export function Header() {
   const [darkMode, setDarkMode] = useState(true);
@@ -29,18 +29,18 @@ export function Header() {
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center space-x-8">
+        <nav className="hidden md:flex items-center space-x-6 lg:space-x-8">
           <Link href="/#pdf-tools" className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-2 transition-colors">
             <FileText className="w-4 h-4" /> PDF Tools
           </Link>
           <Link href="/#image-tools" className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-2 transition-colors">
             <Image className="w-4 h-4" /> Image Tools
           </Link>
-          <Link href="/compress-pdf" className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-2 transition-colors">
-            <FileStack className="w-4 h-4" /> Compress PDF
+          <Link href="/#media-tools" className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 flex items-center gap-2 transition-colors">
+            <Video className="w-4 h-4 text-purple-500" /> Media Tools
           </Link>
-          <Link href="/compress-image" className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-2 transition-colors">
-            <Image className="w-4 h-4" /> Compress Image
+          <Link href="/video-to-audio" className="text-sm font-medium text-purple-600 dark:text-purple-400 hover:text-purple-700 flex items-center gap-2 transition-colors bg-purple-50 dark:bg-purple-950/40 px-3 py-1.5 rounded-xl border border-purple-200 dark:border-purple-800/50">
+            <Headphones className="w-4 h-4 text-purple-500" /> Video to Audio
           </Link>
         </nav>
 
@@ -78,6 +78,12 @@ export function Header() {
           </Link>
           <Link href="/#image-tools" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-base font-medium text-gray-700 dark:text-gray-200">
             Image Tools
+          </Link>
+          <Link href="/#media-tools" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-base font-medium text-gray-700 dark:text-gray-200 text-purple-600 dark:text-purple-400">
+            Media & Audio Tools
+          </Link>
+          <Link href="/video-to-audio" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-base font-medium text-purple-600 dark:text-purple-400">
+            Video to Audio Converter
           </Link>
           <Link href="/compress-pdf" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-base font-medium text-gray-700 dark:text-gray-200">
             Compress PDF
