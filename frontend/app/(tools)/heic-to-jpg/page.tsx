@@ -1,26 +1,14 @@
-'use client';
+import { Metadata } from 'next';
+import { generateMetadataConfig } from '@/lib/seo';
+import { HEICToJPGClient } from './HEICToJPGClient';
 
-import React from 'react';
-import { ToolLayout } from '@/components/tool/ToolLayout';
+export const metadata: Metadata = generateMetadataConfig({
+  title: 'HEIC to JPG Converter — Convert iPhone HEIC Photos Online',
+  description: 'Convert Apple iPhone HEIC and HEIF photos to standard JPG format in high quality. Compatible across all devices.',
+  path: '/heic-to-jpg',
+  keywords: ['heic to jpg', 'convert heic to jpg', 'iphone photo converter', 'heif to jpg', 'heic converter online'],
+});
 
 export default function HEICToJPGPage() {
-  return (
-    <ToolLayout
-      toolId="convert-image"
-      title="HEIC to JPG"
-      description="Convert iPhone HEIC photos to standard JPG format compatible everywhere."
-      accept=".heic,image/heic,image/heif"
-      initialOptions={{ targetFormat: 'jpg' }}
-      seoContent={{
-        howItWorks: [
-          { step: 'Select HEIC Photos', text: 'Upload HEIC files directly from your iPhone or Mac.' },
-          { step: 'Convert', text: 'Our engine decodes HEVC streams into JPEG images.' },
-          { step: 'Download JPG', text: 'Save high quality JPG photos usable on any platform or website.' },
-        ],
-        faqs: [
-          { q: 'Is image quality lost when converting HEIC to JPG?', a: 'No, our encoder uses maximum quality preservation settings.' },
-        ],
-      }}
-    />
-  );
+  return <HEICToJPGClient />;
 }

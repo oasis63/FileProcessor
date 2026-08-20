@@ -1,25 +1,14 @@
-'use client';
+import { Metadata } from 'next';
+import { generateMetadataConfig } from '@/lib/seo';
+import { PDFToJPGClient } from './PDFToJPGClient';
 
-import React from 'react';
-import { ToolLayout } from '@/components/tool/ToolLayout';
+export const metadata: Metadata = generateMetadataConfig({
+  title: 'PDF to JPG Converter — Convert PDF Pages to Images',
+  description: 'Convert PDF pages into high-resolution JPG images. Download converted pages instantly as a ZIP archive.',
+  path: '/pdf-to-jpg',
+  keywords: ['pdf to jpg', 'convert pdf to jpg', 'pdf to image', 'pdf to picture'],
+});
 
 export default function PDFToJPGPage() {
-  return (
-    <ToolLayout
-      toolId="pdf-to-jpg"
-      title="PDF to JPG"
-      description="Extract PDF pages and save them as high-resolution JPG images."
-      accept=".pdf"
-      seoContent={{
-        howItWorks: [
-          { step: 'Upload PDF', text: 'Select the PDF document you want to extract images from.' },
-          { step: 'Process', text: 'Poppler Engine converts each page into a 150 DPI JPEG photo.' },
-          { step: 'Download ZIP', text: 'Download a ZIP archive containing all extracted page images.' },
-        ],
-        faqs: [
-          { q: 'What resolution will the resulting images be?', a: 'All pages are rendered at crisp 150 DPI print-ready quality.' },
-        ],
-      }}
-    />
-  );
+  return <PDFToJPGClient />;
 }
