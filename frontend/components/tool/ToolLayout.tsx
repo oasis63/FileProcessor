@@ -5,6 +5,7 @@ import { FileDropzone } from '../upload/FileDropzone';
 import { ResultCard } from './ResultCard';
 import { Job, FileMetadata } from '@/types';
 import { uploadFiles, createJob, getJobStatus } from '@/lib/api-client';
+import { generateWebApplicationSchema, generateFAQSchema } from '@/lib/seo';
 import { Loader2, ArrowRight, ShieldCheck, Zap, HelpCircle } from 'lucide-react';
 
 interface ToolLayoutProps {
@@ -37,6 +38,9 @@ export function ToolLayout({
   const [jobProgress, setJobProgress] = useState(0);
   const [completedJob, setCompletedJob] = useState<Job | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const appSchema = generateWebApplicationSchema(title, description, `/${toolId}`);
+  const faqSchema = seoContent ? generateFAQSchema(seoContent.faqs) : null;
 
   const handleStartProcessing = async () => {
     if (selectedFiles.length === 0) return;
@@ -90,6 +94,18 @@ export function ToolLayout({
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
+      {/* Schema.org Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(appSchema) }}
+      />
+      {faqSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+        />
+      )}
+
       {/* Tool Header */}
       <div className="text-center max-w-2xl mx-auto space-y-3">
         <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 dark:text-white tracking-tight">

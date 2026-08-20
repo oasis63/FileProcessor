@@ -49,6 +49,7 @@ type ToolCategory string
 const (
 	CategoryPDF   ToolCategory = "PDF"
 	CategoryImage ToolCategory = "IMAGE"
+	CategoryMedia ToolCategory = "MEDIA"
 )
 
 type Tool struct {

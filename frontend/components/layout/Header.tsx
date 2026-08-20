@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-import { FileStack, Image, FileText, Moon, Sun, Menu, X, Zap } from 'lucide-react';
+import { FileText, Image, Video, Moon, Sun, Menu, X, Zap } from 'lucide-react';
 
 export function Header() {
   const [darkMode, setDarkMode] = useState(true);
@@ -29,18 +29,15 @@ export function Header() {
         </Link>
 
         {/* Desktop Nav */}
-        <nav className="hidden md:flex items-center space-x-8">
+        <nav className="hidden md:flex items-center space-x-6 lg:space-x-8">
           <Link href="/#pdf-tools" className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-2 transition-colors">
             <FileText className="w-4 h-4" /> PDF Tools
           </Link>
           <Link href="/#image-tools" className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-2 transition-colors">
             <Image className="w-4 h-4" /> Image Tools
           </Link>
-          <Link href="/compress-pdf" className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-2 transition-colors">
-            <FileStack className="w-4 h-4" /> Compress PDF
-          </Link>
-          <Link href="/compress-image" className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-2 transition-colors">
-            <Image className="w-4 h-4" /> Compress Image
+          <Link href="/#media-tools" className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 flex items-center gap-2 transition-colors">
+            <Video className="w-4 h-4" /> Media Tools
           </Link>
         </nav>
 
@@ -79,11 +76,8 @@ export function Header() {
           <Link href="/#image-tools" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-base font-medium text-gray-700 dark:text-gray-200">
             Image Tools
           </Link>
-          <Link href="/compress-pdf" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-base font-medium text-gray-700 dark:text-gray-200">
-            Compress PDF
-          </Link>
-          <Link href="/compress-image" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-base font-medium text-gray-700 dark:text-gray-200">
-            Compress Image
+          <Link href="/#media-tools" onClick={() => setMobileMenuOpen(false)} className="block py-2 text-base font-medium text-gray-700 dark:text-gray-200">
+            Media Tools
           </Link>
         </div>
       )}

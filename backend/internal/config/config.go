@@ -10,6 +10,7 @@ type Config struct {
 	StorageDir        string
 	PDFWorkers        int
 	ImageWorkers      int
+	MediaWorkers      int
 	MaxConcurrentJobs int
 	MaxFileSizeMB     int64
 	FileRetentionMins int
@@ -21,6 +22,7 @@ func LoadConfig() *Config {
 		StorageDir:        getEnv("STORAGE_DIR", "/tmp/fileprocessor_storage"),
 		PDFWorkers:        getEnvInt("PDF_WORKERS", 4),
 		ImageWorkers:      getEnvInt("IMAGE_WORKERS", 8),
+		MediaWorkers:      getEnvInt("MEDIA_WORKERS", 4),
 		MaxConcurrentJobs: getEnvInt("MAX_CONCURRENT_JOBS", 12),
 		MaxFileSizeMB:     int64(getEnvInt("MAX_FILE_SIZE_MB", 100)),
 		FileRetentionMins: getEnvInt("FILE_RETENTION_MINS", 60),
