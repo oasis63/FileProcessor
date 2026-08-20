@@ -1,14 +1,18 @@
 import { Metadata } from 'next';
 import { generateMetadataConfig } from '@/lib/seo';
+import { getToolByPath } from '@/lib/tools-catalog';
+
 import { SplitPDFClient } from './SplitPDFClient';
 
-export const metadata: Metadata = generateMetadataConfig({
-  title: 'Split PDF Online — Extract Pages From PDF Documents',
-  description: 'Separate PDF pages or extract individual pages into separate PDF files online.',
-  path: '/split-pdf',
-  keywords: ['split pdf', 'extract pdf pages', 'separate pdf', 'pdf splitter online'],
-});
 
+const tool = getToolByPath('/split-pdf')!;
+
+export const metadata: Metadata = generateMetadataConfig({
+  title: tool.metaTitle,
+  description: tool.description,
+  path: tool.path,
+  keywords: tool.keywords,
+});
 export default function SplitPDFPage() {
   return <SplitPDFClient />;
 }

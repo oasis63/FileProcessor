@@ -1,11 +1,14 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 import { FileDropzone } from '../upload/FileDropzone';
 import { ResultCard } from './ResultCard';
 import { Job, FileMetadata } from '@/types';
 import { uploadFiles, createJob, getJobStatus } from '@/lib/api-client';
-import { generateWebApplicationSchema, generateFAQSchema } from '@/lib/seo';
+import { generateWebApplicationSchema, generateFAQSchema, generateHowToSchema, generateBreadcrumbSchema } from '@/lib/seo';
+import { getRelatedTools, getToolByPath } from '@/lib/tools-catalog';
+import { JsonLd } from '@/components/seo/JsonLd';
 import { takePendingFiles } from '@/lib/pending-files';
 import { Loader2, ArrowRight, ShieldCheck, Zap, HelpCircle } from 'lucide-react';
 
@@ -23,6 +26,7 @@ interface ToolLayoutProps {
     howItWorks: Array<{ step: string; text: string }>;
     faqs: Array<{ q: string; a: string }>;
   };
+  pagePath?: string;
 }
 
 export function ToolLayout({
@@ -36,6 +40,7 @@ export function ToolLayout({
   resolveToolId,
   validate,
   seoContent,
+  pagePath,
 }: ToolLayoutProps) {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [options, setOptions] = useState<Record<string, any>>(initialOptions);
@@ -44,6 +49,28 @@ export function ToolLayout({
   const [completedJob, setCompletedJob] = useState<Job | null>(null);
   const [error, setError] = useState<string | null>(null);
   const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const path = pagePath || `/${toolId}`;
+  const related = getRelatedTools(path);
+  const catalogTool = getToolByPath(path);
+
+  const appSchema = generateWebApplicationSchema(title, description, path);
+  const faqSchema = seoContent ? generateFAQSchema(seoContent.faqs) : null;
+  const howToSchema = seoContent
+    ? generateHowToSchema(`How to ${title}`, description, path, seoContent.howItWorks)
+    : null;
+  const breadcrumbSchema = generateBreadcrumbSchema([
+    { name: 'Home', path: '/' },
+    {
+      name: catalogTool?.category ? `${catalogTool.category} tools` : 'Tools',
+      path:
+        catalogTool?.category === 'Image'
+          ? '/#image-tools'
+          : catalogTool?.category === 'Media'
+            ? '/#media-tools'
+            : '/#pdf-tools',
+    },
+    { name: title, path },
+  ]);
 
   useEffect(() => {
     const pending = takePendingFiles();
@@ -56,9 +83,6 @@ export function ToolLayout({
       }
     };
   }, [multiple]);
-
-  const appSchema = generateWebApplicationSchema(title, description, `/${toolId}`);
-  const faqSchema = seoContent ? generateFAQSchema(seoContent.faqs) : null;
 
   const handleStartProcessing = async () => {
     if (selectedFiles.length === 0) return;
@@ -123,17 +147,37 @@ export function ToolLayout({
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-12">
-      {/* Schema.org Structured Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(appSchema) }}
-      />
-      {faqSchema && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-        />
-      )}
+      <JsonLd data={appSchema} />
+      <JsonLd data={faqSchema} />
+      <JsonLd data={howToSchema} />
+      <JsonLd data={breadcrumbSchema} />
+
+      <nav aria-label="Breadcrumb" className="text-xs text-ink-faint">
+        <ol className="flex flex-wrap items-center gap-1">
+          <li>
+            <Link href="/" className="hover:text-brand-700 dark:hover:text-brand-300">
+              Home
+            </Link>
+          </li>
+          <li aria-hidden>/</li>
+          <li>
+            <Link
+              href={
+                catalogTool?.category === 'Image'
+                  ? '/#image-tools'
+                  : catalogTool?.category === 'Media'
+                    ? '/#media-tools'
+                    : '/#pdf-tools'
+              }
+              className="hover:text-brand-700 dark:hover:text-brand-300"
+            >
+              {catalogTool?.category || 'Tools'}
+            </Link>
+          </li>
+          <li aria-hidden>/</li>
+          <li className="text-ink-muted dark:text-paper/70">{title}</li>
+        </ol>
+      </nav>
 
       {/* Tool Header */}
       <div className="text-center max-w-2xl mx-auto space-y-3">
@@ -239,11 +283,26 @@ export function ToolLayout({
             <h2 className="font-display text-2xl text-ink dark:text-paper">Questions</h2>
             {seoContent.faqs.map((faq, i) => (
               <div key={i} className="p-5 rounded-md border border-paper-line dark:border-night-border bg-paper-raised dark:bg-night-raised space-y-1">
-                <h4 className="font-semibold text-sm text-ink dark:text-paper">{faq.q}</h4>
+                <h3 className="font-semibold text-sm text-ink dark:text-paper">{faq.q}</h3>
                 <p className="text-sm text-ink-muted dark:text-paper/60 leading-relaxed">{faq.a}</p>
               </div>
             ))}
           </div>
+      {related.length > 0 && (
+        <div className="pt-8 space-y-3">
+          <h2 className="font-display text-2xl text-ink dark:text-paper">Related tools</h2>
+          <ul className="flex flex-wrap gap-3 text-sm">
+            {related.map((tool) => (
+              <li key={tool.path}>
+                <Link
+                  href={tool.path}
+                  className="text-brand-700 dark:text-brand-300 underline underline-offset-2"
+                >
+                  {tool.navTitle}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
     </div>

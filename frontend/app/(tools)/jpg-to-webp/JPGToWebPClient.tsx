@@ -7,6 +7,7 @@ export function JPGToWebPClient() {
   return (
     <ToolLayout
       toolId="convert-image"
+      pagePath="/jpg-to-webp"
       title="JPG to WebP"
       description="Convert legacy JPEG images into lightweight next-gen WebP format."
       accept="image/jpeg,image/jpg"

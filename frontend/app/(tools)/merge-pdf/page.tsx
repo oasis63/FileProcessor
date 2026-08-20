@@ -1,14 +1,18 @@
 import { Metadata } from 'next';
 import { generateMetadataConfig } from '@/lib/seo';
+import { getToolByPath } from '@/lib/tools-catalog';
+
 import { MergePDFClient } from './MergePDFClient';
 
-export const metadata: Metadata = generateMetadataConfig({
-  title: 'Merge PDF Files Online — Combine PDFs Into One File',
-  description: 'Combine multiple PDF documents into a single unified PDF file in seconds. Simple, private, and free.',
-  path: '/merge-pdf',
-  keywords: ['merge pdf', 'combine pdf files', 'join pdf', 'merge pdf online', 'pdf joiner'],
-});
 
+const tool = getToolByPath('/merge-pdf')!;
+
+export const metadata: Metadata = generateMetadataConfig({
+  title: tool.metaTitle,
+  description: tool.description,
+  path: tool.path,
+  keywords: tool.keywords,
+});
 export default function MergePDFPage() {
   return <MergePDFClient />;
 }

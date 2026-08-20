@@ -1,14 +1,18 @@
 import { Metadata } from 'next';
 import { generateMetadataConfig } from '@/lib/seo';
+import { getToolByPath } from '@/lib/tools-catalog';
+
 import { CompressImageClient } from './CompressImageClient';
 
-export const metadata: Metadata = generateMetadataConfig({
-  title: 'Compress Image Online — Reduce JPG, PNG, WebP & HEIC Size',
-  description: 'Intelligently compress JPG, PNG, WebP, and HEIC images without losing visible quality. Fast drag and drop image compressor.',
-  path: '/compress-image',
-  keywords: ['compress image', 'image compressor', 'reduce photo size', 'compress jpg', 'compress png', 'compress webp'],
-});
 
+const tool = getToolByPath('/compress-image')!;
+
+export const metadata: Metadata = generateMetadataConfig({
+  title: tool.metaTitle,
+  description: tool.description,
+  path: tool.path,
+  keywords: tool.keywords,
+});
 export default function CompressImagePage() {
   return <CompressImageClient />;
 }

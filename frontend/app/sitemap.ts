@@ -1,32 +1,18 @@
-import { MetadataRoute } from 'next';
+import type { MetadataRoute } from 'next';
 import { SITE_URL } from '@/lib/seo';
+import { INDEXABLE_PATHS } from '@/lib/tools-catalog';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const routes = [
-    '',
-    '/compress-pdf',
-    '/merge-pdf',
-    '/split-pdf',
-    '/pdf-to-jpg',
-    '/jpg-to-pdf',
-    '/protect-pdf',
-    '/rotate-pdf',
-    '/remove-pdf-metadata',
-    '/compress-image',
-    '/resize-image',
-    '/crop-image',
-    '/jpg-to-webp',
-    '/heic-to-jpg',
-    '/remove-image-metadata',
-    '/video-to-audio',
-  ];
-
   const now = new Date();
 
-  return routes.map((route) => ({
-    url: `${SITE_URL}${route}`,
-    lastModified: now,
-    changeFrequency: route === '' ? 'daily' : 'weekly',
-    priority: route === '' ? 1.0 : 0.8,
-  }));
+  return INDEXABLE_PATHS.map((route) => {
+    const isHome = route === '';
+    const isLegal = route === '/about' || route === '/privacy' || route === '/terms';
+    return {
+      url: `${SITE_URL}${route}`,
+      lastModified: now,
+      changeFrequency: isHome ? 'weekly' : isLegal ? 'yearly' : 'monthly',
+      priority: isHome ? 1 : isLegal ? 0.3 : 0.8,
+    };
+  });
 }

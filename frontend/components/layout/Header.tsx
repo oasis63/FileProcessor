@@ -29,7 +29,7 @@ export function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <BrandLockup />
 
-        <nav className="hidden md:flex items-center space-x-7">
+        <nav className="hidden md:flex items-center space-x-7" aria-label="Primary">
           <Link href="/#pdf-tools" className={navClass}>
             <FileText className="w-4 h-4" /> PDF
           </Link>
@@ -46,6 +46,7 @@ export function Header() {
             onClick={toggleDarkMode}
             className="p-2 rounded-md border border-paper-line dark:border-night-border text-ink-muted dark:text-paper/70 hover:bg-paper-muted dark:hover:bg-night-raised"
             title="Toggle theme"
+            aria-label={darkMode ? 'Switch to light mode' : 'Switch to dark mode'}
           >
             {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
           </button>
@@ -59,6 +60,7 @@ export function Header() {
 
           <button
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
             className="md:hidden p-2 rounded-md text-ink-muted dark:text-paper/70 hover:bg-paper-muted dark:hover:bg-night-raised"
           >
             {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}

@@ -90,6 +90,15 @@ export function FileDropzone({
         onDragLeave={handleDragLeave}
         onDrop={handleDrop}
         onClick={() => !disabled && inputRef.current?.click()}
+        role="button"
+        tabIndex={disabled ? -1 : 0}
+        aria-label="Upload a file"
+        onKeyDown={(e) => {
+          if (!disabled && (e.key === 'Enter' || e.key === ' ')) {
+            e.preventDefault();
+            inputRef.current?.click();
+          }
+        }}
         className={`relative group cursor-pointer border border-dashed rounded-md p-8 sm:p-11 text-center ${
           isDragOver
             ? 'border-brand-500 bg-brand-50 dark:bg-night dark:border-brand-400'

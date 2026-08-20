@@ -104,8 +104,9 @@ export function CompressPDFClient() {
           { step: 'Download PDF', text: 'Get your compressed PDF immediately with reduced file size.' },
         ],
         faqs: [
-          { q: 'Does compressing a PDF affect its quality?', a: 'FileProcessor uses intelligent Ghostscript and pdfcpu optimization to maintain high font and visual readability while stripping redundant objects.' },
-          { q: 'Is my uploaded PDF document safe?', a: 'Yes! All uploaded PDF files are processed in isolated memory and automatically destroyed after 1 hour.' },
+          { q: 'Does compressing a PDF affect its quality?', a: 'The ebook and printer presets keep text readable. The screen preset is more aggressive and may soften images. Target-size mode tries printer, then ebook, then screen until the file is under your limit.' },
+          { q: 'Is my uploaded PDF document safe?', a: 'Files are stored only to run the job and are deleted after 60 minutes. Anyone with the job download link can fetch the result until then.' },
+          { q: 'Can I compress a PDF to under 2 MB?', a: 'Choose target size and pick Under 2 MB. If the document is already mostly images, it may not go that small without a visible quality drop.' },
         ],
       }}
     />

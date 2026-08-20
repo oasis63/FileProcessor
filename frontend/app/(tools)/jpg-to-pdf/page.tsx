@@ -1,14 +1,18 @@
 import { Metadata } from 'next';
 import { generateMetadataConfig } from '@/lib/seo';
+import { getToolByPath } from '@/lib/tools-catalog';
+
 import { JPGToPDFClient } from './JPGToPDFClient';
 
-export const metadata: Metadata = generateMetadataConfig({
-  title: 'JPG to PDF Converter — Convert Images to PDF Document',
-  description: 'Convert JPG, PNG, and WebP images into a single professional PDF document in seconds.',
-  path: '/jpg-to-pdf',
-  keywords: ['jpg to pdf', 'convert image to pdf', 'picture to pdf', 'photos to pdf'],
-});
 
+const tool = getToolByPath('/jpg-to-pdf')!;
+
+export const metadata: Metadata = generateMetadataConfig({
+  title: tool.metaTitle,
+  description: tool.description,
+  path: tool.path,
+  keywords: tool.keywords,
+});
 export default function JPGToPDFPage() {
   return <JPGToPDFClient />;
 }

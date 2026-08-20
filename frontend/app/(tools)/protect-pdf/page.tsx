@@ -1,14 +1,18 @@
 import { Metadata } from 'next';
 import { generateMetadataConfig } from '@/lib/seo';
+import { getToolByPath } from '@/lib/tools-catalog';
+
 import { ProtectPDFClient } from './ProtectPDFClient';
 
-export const metadata: Metadata = generateMetadataConfig({
-  title: 'Protect PDF Online — Encrypt PDF with Password',
-  description: 'Encrypt your sensitive PDF files with strong password protection and AES encryption online.',
-  path: '/protect-pdf',
-  keywords: ['protect pdf', 'encrypt pdf', 'password protect pdf', 'secure pdf online'],
-});
 
+const tool = getToolByPath('/protect-pdf')!;
+
+export const metadata: Metadata = generateMetadataConfig({
+  title: tool.metaTitle,
+  description: tool.description,
+  path: tool.path,
+  keywords: tool.keywords,
+});
 export default function ProtectPDFPage() {
   return <ProtectPDFClient />;
 }

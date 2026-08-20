@@ -1,14 +1,18 @@
 import { Metadata } from 'next';
 import { generateMetadataConfig } from '@/lib/seo';
+import { getToolByPath } from '@/lib/tools-catalog';
+
 import { CropImageClient } from './CropImageClient';
 
-export const metadata: Metadata = generateMetadataConfig({
-  title: 'Crop Image Online — Free Online Photo Cropper',
-  description: 'Crop rectangular regions from your JPG, PNG, and WebP images quickly and easily directly in your browser.',
-  path: '/crop-image',
-  keywords: ['crop image', 'image cropper', 'crop photo online', 'cut image', 'crop picture'],
-});
 
+const tool = getToolByPath('/crop-image')!;
+
+export const metadata: Metadata = generateMetadataConfig({
+  title: tool.metaTitle,
+  description: tool.description,
+  path: tool.path,
+  keywords: tool.keywords,
+});
 export default function CropImagePage() {
   return <CropImageClient />;
 }

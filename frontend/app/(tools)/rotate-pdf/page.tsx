@@ -1,14 +1,18 @@
 import { Metadata } from 'next';
 import { generateMetadataConfig } from '@/lib/seo';
+import { getToolByPath } from '@/lib/tools-catalog';
+
 import { RotatePDFClient } from './RotatePDFClient';
 
-export const metadata: Metadata = generateMetadataConfig({
-  title: 'Rotate PDF Online — Turn PDF Pages 90, 180, or 270 Degrees',
-  description: 'Rotate PDF pages clockwise or counterclockwise in seconds. Free online PDF rotator with no signup.',
-  path: '/rotate-pdf',
-  keywords: ['rotate pdf', 'turn pdf pages', 'pdf rotator', 'rotate pdf 90 degrees'],
-});
 
+const tool = getToolByPath('/rotate-pdf')!;
+
+export const metadata: Metadata = generateMetadataConfig({
+  title: tool.metaTitle,
+  description: tool.description,
+  path: tool.path,
+  keywords: tool.keywords,
+});
 export default function RotatePDFPage() {
   return <RotatePDFClient />;
 }

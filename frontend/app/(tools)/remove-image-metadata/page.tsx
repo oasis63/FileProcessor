@@ -1,14 +1,18 @@
 import { Metadata } from 'next';
 import { generateMetadataConfig } from '@/lib/seo';
+import { getToolByPath } from '@/lib/tools-catalog';
+
 import { RemoveImageMetadataClient } from './RemoveImageMetadataClient';
 
-export const metadata: Metadata = generateMetadataConfig({
-  title: 'Remove Image Metadata Online — Strip EXIF and GPS from Photos',
-  description: 'Remove EXIF, GPS location, and camera data from JPG, PNG, WebP, and HEIC photos before you share them.',
-  path: '/remove-image-metadata',
-  keywords: ['remove exif', 'strip image metadata', 'remove gps from photo', 'exif cleaner'],
-});
 
+const tool = getToolByPath('/remove-image-metadata')!;
+
+export const metadata: Metadata = generateMetadataConfig({
+  title: tool.metaTitle,
+  description: tool.description,
+  path: tool.path,
+  keywords: tool.keywords,
+});
 export default function RemoveImageMetadataPage() {
   return <RemoveImageMetadataClient />;
 }

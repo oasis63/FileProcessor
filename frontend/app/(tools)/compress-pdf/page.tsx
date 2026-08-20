@@ -1,14 +1,18 @@
 import { Metadata } from 'next';
 import { generateMetadataConfig } from '@/lib/seo';
+import { getToolByPath } from '@/lib/tools-catalog';
+
 import { CompressPDFClient } from './CompressPDFClient';
 
-export const metadata: Metadata = generateMetadataConfig({
-  title: 'Compress PDF Online — Reduce PDF File Size Free',
-  description: 'Shrink your PDF file size online while maintaining maximum font and visual readability. Target specific MB limits automatically.',
-  path: '/compress-pdf',
-  keywords: ['compress pdf', 'reduce pdf size', 'pdf compressor online', 'shrink pdf', 'compress pdf to target size'],
-});
 
+const tool = getToolByPath('/compress-pdf')!;
+
+export const metadata: Metadata = generateMetadataConfig({
+  title: tool.metaTitle,
+  description: tool.description,
+  path: tool.path,
+  keywords: tool.keywords,
+});
 export default function CompressPDFPage() {
   return <CompressPDFClient />;
 }

@@ -20,7 +20,7 @@ export function BrandMark({ size = 36 }: { size?: number }) {
 
 export function BrandLockup() {
   return (
-    <Link href="/" className="flex items-center gap-2.5 group">
+    <Link href="/" className="flex items-center gap-2.5 group" aria-label="FileProcessor home">
       <BrandMark size={32} />
       <span className="text-[17px] font-semibold tracking-tight text-ink dark:text-paper">
         FileProcessor

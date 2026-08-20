@@ -46,8 +46,13 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 pt-5 border-t border-paper-line dark:border-night-border text-xs text-ink-faint">
-          © {new Date().getFullYear()} FileProcessor. Processed files are removed automatically after 60 minutes.
+        <div className="mt-10 pt-5 border-t border-paper-line dark:border-night-border flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs text-ink-faint">
+          <p>© {new Date().getFullYear()} FileProcessor. Processed files are removed automatically after 60 minutes.</p>
+          <p className="flex gap-4">
+            <Link href="/about" className={link}>About</Link>
+            <Link href="/privacy" className={link}>Privacy</Link>
+            <Link href="/terms" className={link}>Terms</Link>
+          </p>
         </div>
       </div>
     </footer>

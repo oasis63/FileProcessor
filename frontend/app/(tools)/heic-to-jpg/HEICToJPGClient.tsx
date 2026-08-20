@@ -7,6 +7,7 @@ export function HEICToJPGClient() {
   return (
     <ToolLayout
       toolId="convert-image"
+      pagePath="/heic-to-jpg"
       title="HEIC to JPG"
       description="Convert iPhone HEIC photos to standard JPG format compatible everywhere."
       accept=".heic,image/heic,image/heif"

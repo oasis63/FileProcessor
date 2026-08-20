@@ -7,6 +7,7 @@ export function JPGToPDFClient() {
   return (
     <ToolLayout
       toolId="image-to-pdf"
+      pagePath="/jpg-to-pdf"
       title="JPG to PDF"
       description="Convert JPG, PNG, or WebP images into a single PDF document."
       accept="image/*"

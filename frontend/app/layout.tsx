@@ -1,9 +1,17 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Source_Sans_3 } from 'next/font/google';
 import '@/styles/globals.css';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
-import { SITE_URL, SITE_NAME } from '@/lib/seo';
+import { JsonLd } from '@/components/seo/JsonLd';
+import {
+  SITE_DESCRIPTION,
+  SITE_NAME,
+  SITE_TAGLINE,
+  SITE_URL,
+  generateOrganizationSchema,
+  generateWebsiteSchema,
+} from '@/lib/seo';
 
 const sans = Source_Sans_3({
   subsets: ['latin'],
@@ -11,29 +19,40 @@ const sans = Source_Sans_3({
   display: 'swap',
 });
 
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#F3F4F6' },
+    { media: '(prefers-color-scheme: dark)', color: '#111213' },
+  ],
+  width: 'device-width',
+  initialScale: 1,
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${SITE_NAME} — Free PDF, Image & Video Utility Platform`,
+    default: `${SITE_NAME} — ${SITE_TAGLINE}`,
     template: `%s | ${SITE_NAME}`,
   },
-  description:
-    'The fastest online utility platform to compress, convert, merge, split, resize, and process PDFs, Images, and Video files with zero quality loss and 100% privacy.',
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
   keywords: [
-    'file processor',
-    'online pdf tools',
+    'fileprocessor',
+    'free pdf tools',
     'compress pdf online',
     'compress image online',
-    'video to audio converter',
-    'mp4 to mp3',
     'heic to jpg',
     'merge pdf',
-    'split pdf',
-    'free online tools',
+    'mp4 to mp3',
   ],
-  authors: [{ name: SITE_NAME }],
+  authors: [{ name: SITE_NAME, url: SITE_URL }],
   creator: SITE_NAME,
   publisher: SITE_NAME,
+  category: 'utilities',
+  formatDetection: { telephone: false, email: false, address: false },
+  alternates: {
+    canonical: SITE_URL,
+  },
   robots: {
     index: true,
     follow: true,
@@ -50,15 +69,21 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: SITE_URL,
     siteName: SITE_NAME,
-    title: `${SITE_NAME} — Free PDF, Image & Video Utility Platform`,
-    description:
-      'The fastest online utility platform to compress, convert, merge, split, resize, and process PDFs, Images, and Video files with zero quality loss.',
+    title: `${SITE_NAME} — ${SITE_TAGLINE}`,
+    description: SITE_DESCRIPTION,
   },
   twitter: {
     card: 'summary_large_image',
-    title: `${SITE_NAME} — Free PDF, Image & Video Utility Platform`,
-    description:
-      'The fastest online utility platform to compress, convert, merge, split, resize, and process PDFs, Images, and Video files.',
+    title: `${SITE_NAME} — ${SITE_TAGLINE}`,
+    description: SITE_DESCRIPTION,
+  },
+  verification: process.env.GOOGLE_SITE_VERIFICATION
+    ? { google: process.env.GOOGLE_SITE_VERIFICATION }
+    : undefined,
+  appleWebApp: {
+    capable: true,
+    title: SITE_NAME,
+    statusBarStyle: 'default',
   },
 };
 
@@ -70,8 +95,18 @@ export default function RootLayout({
   return (
     <html lang="en" className={sans.variable}>
       <body className="min-h-screen flex flex-col bg-paper dark:bg-night text-ink dark:text-paper font-sans antialiased">
+        <JsonLd data={generateWebsiteSchema()} />
+        <JsonLd data={generateOrganizationSchema()} />
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[60] focus:bg-brand-600 focus:text-white focus:px-3 focus:py-2 focus:rounded-md"
+        >
+          Skip to content
+        </a>
         <Header />
-        <main className="flex-grow">{children}</main>
+        <main id="main-content" className="flex-grow">
+          {children}
+        </main>
         <Footer />
       </body>
     </html>
