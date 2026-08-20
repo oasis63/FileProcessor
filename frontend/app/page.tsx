@@ -22,6 +22,7 @@ import {
   Video
 } from 'lucide-react';
 import { FileDropzone } from '@/components/upload/FileDropzone';
+import { setPendingFiles } from '@/lib/pending-files';
 
 export default function HomePage() {
   const router = useRouter();
@@ -31,10 +32,13 @@ export default function HomePage() {
     setDroppedFiles(files);
     if (files.length > 0) {
       const first = files[0];
-      if (first.type.includes('pdf')) {
+      setPendingFiles(files);
+      if (first.type.includes('pdf') || first.name.toLowerCase().endsWith('.pdf')) {
         router.push('/compress-pdf');
       } else if (first.type.includes('video') || /\.(mp4|mov|avi|mkv|webm|flv|wmv|3gp)$/i.test(first.name)) {
         router.push('/video-to-audio');
+      } else if (/\.(heic|heif)$/i.test(first.name)) {
+        router.push('/heic-to-jpg');
       } else {
         router.push('/compress-image');
       }
@@ -48,6 +52,8 @@ export default function HomePage() {
     { title: 'PDF to JPG', desc: 'Convert PDF pages into high-resolution JPG images', icon: ImageIcon, href: '/pdf-to-jpg' },
     { title: 'JPG to PDF', desc: 'Convert images into a unified PDF document', icon: FileText, href: '/jpg-to-pdf' },
     { title: 'Protect PDF', desc: 'Encrypt your PDF files with password protection', icon: Lock, href: '/protect-pdf' },
+    { title: 'Rotate PDF', desc: 'Turn PDF pages 90, 180, or 270 degrees', icon: RotateCw, href: '/rotate-pdf' },
+    { title: 'Remove PDF Metadata', desc: 'Strip author, title, and tracking tags from PDFs', icon: Shield, href: '/remove-pdf-metadata' },
   ];
 
   const imageTools = [
@@ -57,6 +63,7 @@ export default function HomePage() {
     { title: 'JPG to WebP', desc: 'Convert JPG photos to modern WebP format', icon: Sparkles, href: '/jpg-to-webp' },
     { title: 'HEIC to JPG', desc: 'Convert iPhone HEIC photos to standard JPG', icon: RotateCw, href: '/heic-to-jpg' },
     { title: 'Image to PDF', desc: 'Convert images into a clean PDF document', icon: FileStack, href: '/jpg-to-pdf' },
+    { title: 'Remove Image Metadata', desc: 'Strip EXIF, GPS, and camera data from photos', icon: Shield, href: '/remove-image-metadata' },
   ];
 
   const mediaTools = [

@@ -249,6 +249,13 @@ func (ip *ImageProcessor) ConvertFormat(ctx context.Context, input models.FileMe
 	if fmtStr, ok := options["targetFormat"].(string); ok && fmtStr != "" {
 		targetFormat = strings.ToLower(fmtStr)
 	}
+	switch targetFormat {
+	case "jpg", "jpeg":
+		targetFormat = "jpg"
+	case "png", "webp":
+	default:
+		return nil, fmt.Errorf("unsupported target format: %s", targetFormat)
+	}
 
 	targetExt := "." + targetFormat
 	outPath, err := ip.storage.CreateTempFile("converted", targetExt)

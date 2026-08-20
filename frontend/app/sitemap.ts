@@ -10,11 +10,14 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/pdf-to-jpg',
     '/jpg-to-pdf',
     '/protect-pdf',
+    '/rotate-pdf',
+    '/remove-pdf-metadata',
     '/compress-image',
     '/resize-image',
     '/crop-image',
     '/jpg-to-webp',
     '/heic-to-jpg',
+    '/remove-image-metadata',
     '/video-to-audio',
   ];
 

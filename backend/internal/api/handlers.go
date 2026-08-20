@@ -61,9 +61,11 @@ func (h *APIHandler) ListTools(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *APIHandler) UploadFile(w http.ResponseWriter, r *http.Request) {
-	// 100 MB Max upload memory
-	if err := r.ParseMultipartForm(100 << 20); err != nil {
-		respondError(w, http.StatusBadRequest, "UPLOAD_FAILED", "Failed to parse uploaded form data")
+	maxBytes := h.cfg.MaxFileSizeMB * 1024 * 1024
+	r.Body = http.MaxBytesReader(w, r.Body, maxBytes*5+1024*1024)
+
+	if err := r.ParseMultipartForm(maxBytes); err != nil {
+		respondError(w, http.StatusRequestEntityTooLarge, "UPLOAD_FAILED", "Upload exceeds maximum allowed size")
 		return
 	}
 
@@ -77,25 +79,34 @@ func (h *APIHandler) UploadFile(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var uploadedMetas []models.FileMetadata
+	allowedFormats := []string{"pdf", "jpg", "jpeg", "png", "webp", "heic", "mp4", "mov", "avi", "mkv", "webm", "flv", "wmv", "3gp", "mp3", "wav", "aac", "m4a", "ogg", "flac"}
 
 	for _, fileHeader := range files {
+		if fileHeader.Size > 0 && fileHeader.Size > maxBytes {
+			respondError(w, http.StatusRequestEntityTooLarge, "FILE_TOO_LARGE", fmt.Sprintf("File exceeds %d MB limit", h.cfg.MaxFileSizeMB))
+			return
+		}
+
 		src, err := fileHeader.Open()
 		if err != nil {
 			respondError(w, http.StatusInternalServerError, "FILE_OPEN_ERROR", "Could not read uploaded file")
 			return
 		}
-		defer src.Close()
 
 		sanitizedName := security.SanitizeFilename(fileHeader.Filename)
-		fileID, storedPath, size, err := h.storage.SaveUploadedFile(src, sanitizedName)
+		fileID, storedPath, size, err := h.storage.SaveUploadedFile(src, sanitizedName, maxBytes)
+		src.Close()
 		if err != nil {
-			respondError(w, http.StatusInternalServerError, "STORAGE_ERROR", "Failed to store uploaded file")
+			respondError(w, http.StatusBadRequest, "STORAGE_ERROR", err.Error())
 			return
 		}
 
-		// Magic byte detection
-		allowedFormats := []string{"pdf", "jpg", "jpeg", "png", "webp", "heic", "mp4", "mov", "avi", "mkv", "webm", "flv", "wmv", "3gp", "mp3", "wav", "aac", "m4a", "ogg", "flac"}
-		mimeType, _ := security.ValidateMagicBytes(storedPath, allowedFormats)
+		mimeType, err := security.ValidateMagicBytes(storedPath, allowedFormats)
+		if err != nil {
+			_ = h.storage.DeleteFile(storedPath)
+			respondError(w, http.StatusBadRequest, "INVALID_FILE", err.Error())
+			return
+		}
 
 		uploadedMetas = append(uploadedMetas, models.FileMetadata{
 			ID:           fileID,
@@ -127,6 +138,11 @@ func (h *APIHandler) CreateJob(w http.ResponseWriter, r *http.Request) {
 
 	if payload.ToolID == "" || len(payload.Files) == 0 {
 		respondError(w, http.StatusBadRequest, "INVALID_JOB", "toolId and files are required")
+		return
+	}
+
+	if !jobs.IsKnownTool(payload.ToolID) {
+		respondError(w, http.StatusBadRequest, "UNKNOWN_TOOL", "Unknown toolId")
 		return
 	}
 

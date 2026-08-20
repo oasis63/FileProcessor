@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { FileDropzone } from '../upload/FileDropzone';
 import { ResultCard } from './ResultCard';
 import { Job, FileMetadata } from '@/types';
 import { uploadFiles, createJob, getJobStatus } from '@/lib/api-client';
 import { generateWebApplicationSchema, generateFAQSchema } from '@/lib/seo';
+import { takePendingFiles } from '@/lib/pending-files';
 import { Loader2, ArrowRight, ShieldCheck, Zap, HelpCircle } from 'lucide-react';
 
 interface ToolLayoutProps {
@@ -16,6 +17,8 @@ interface ToolLayoutProps {
   multiple?: boolean;
   optionsComponent?: (options: Record<string, any>, setOptions: React.Dispatch<React.SetStateAction<Record<string, any>>>) => React.ReactNode;
   initialOptions?: Record<string, any>;
+  resolveToolId?: (options: Record<string, any>) => string;
+  validate?: (files: File[], options: Record<string, any>) => string | null;
   seoContent?: {
     howItWorks: Array<{ step: string; text: string }>;
     faqs: Array<{ q: string; a: string }>;
@@ -30,6 +33,8 @@ export function ToolLayout({
   multiple = false,
   optionsComponent,
   initialOptions = {},
+  resolveToolId,
+  validate,
   seoContent,
 }: ToolLayoutProps) {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
@@ -38,42 +43,66 @@ export function ToolLayout({
   const [jobProgress, setJobProgress] = useState(0);
   const [completedJob, setCompletedJob] = useState<Job | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    const pending = takePendingFiles();
+    if (pending.length > 0) {
+      setSelectedFiles(multiple ? pending : pending.slice(0, 1));
+    }
+    return () => {
+      if (pollRef.current) {
+        clearInterval(pollRef.current);
+      }
+    };
+  }, [multiple]);
 
   const appSchema = generateWebApplicationSchema(title, description, `/${toolId}`);
   const faqSchema = seoContent ? generateFAQSchema(seoContent.faqs) : null;
 
   const handleStartProcessing = async () => {
     if (selectedFiles.length === 0) return;
+    const validationError = validate?.(selectedFiles, options);
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
+
     setIsProcessing(true);
     setError(null);
     setJobProgress(10);
 
     try {
-      // 1. Upload files
       const uploadedMetas: FileMetadata[] = await uploadFiles(selectedFiles);
       setJobProgress(40);
 
-      // 2. Create job
-      const job: Job = await createJob(toolId, uploadedMetas, options);
+      const activeToolId = resolveToolId ? resolveToolId(options) : toolId;
+      const job: Job = await createJob(activeToolId, uploadedMetas, options);
       setJobProgress(60);
 
-      // 3. Poll status until finished
-      const pollInterval = setInterval(async () => {
+      if (pollRef.current) {
+        clearInterval(pollRef.current);
+      }
+
+      pollRef.current = setInterval(async () => {
         try {
           const updated = await getJobStatus(job.id);
           setJobProgress(updated.progress || 75);
 
           if (updated.status === 'COMPLETED') {
-            clearInterval(pollInterval);
+            if (pollRef.current) clearInterval(pollRef.current);
+            pollRef.current = null;
             setCompletedJob(updated);
             setIsProcessing(false);
           } else if (updated.status === 'FAILED') {
-            clearInterval(pollInterval);
+            if (pollRef.current) clearInterval(pollRef.current);
+            pollRef.current = null;
             setError(updated.error?.message || 'Processing failed');
             setIsProcessing(false);
           }
-        } catch (pollErr) {
-          clearInterval(pollInterval);
+        } catch {
+          if (pollRef.current) clearInterval(pollRef.current);
+          pollRef.current = null;
           setError('Failed to fetch processing status');
           setIsProcessing(false);
         }

@@ -7,6 +7,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strings"
 
 	"github.com/fileprocessor/backend/internal/models"
@@ -70,22 +71,38 @@ func (mp *MediaProcessor) ExtractAudio(ctx context.Context, input models.FileMet
 
 	outputFormat := "mp3"
 	if fmtOpt, ok := options["outputFormat"].(string); ok && fmtOpt != "" {
-		outputFormat = strings.ToLower(fmtOpt)
+		outputFormat = strings.ToLower(strings.TrimSpace(fmtOpt))
+	}
+	switch outputFormat {
+	case "mp3", "wav", "aac", "m4a", "flac", "ogg":
+	default:
+		return nil, fmt.Errorf("unsupported audio format: %s", outputFormat)
 	}
 
 	bitrate := "192k"
 	if brOpt, ok := options["bitrate"].(string); ok && brOpt != "" {
-		bitrate = strings.ToLower(brOpt)
+		bitrate = strings.ToLower(strings.TrimSpace(brOpt))
+	}
+	switch bitrate {
+	case "copy", "64k", "96k", "128k", "160k", "192k", "256k", "320k":
+	default:
+		return nil, fmt.Errorf("unsupported bitrate: %s", bitrate)
 	}
 
 	startTime := ""
 	if stOpt, ok := options["startTime"].(string); ok && stOpt != "" {
 		startTime = strings.TrimSpace(stOpt)
+		if !isSafeTimestamp(startTime) {
+			return nil, fmt.Errorf("invalid startTime")
+		}
 	}
 
 	endTime := ""
 	if etOpt, ok := options["endTime"].(string); ok && etOpt != "" {
 		endTime = strings.TrimSpace(etOpt)
+		if !isSafeTimestamp(endTime) {
+			return nil, fmt.Errorf("invalid endTime")
+		}
 	}
 
 	outPath, err := mp.storage.CreateTempFile("audio_out", "."+outputFormat)
@@ -153,6 +170,12 @@ func (mp *MediaProcessor) ExtractAudio(ctx context.Context, input models.FileMet
 		MimeType:    mimeType,
 		SizeBytes:   stat.Size(),
 	}, nil
+}
+
+func isSafeTimestamp(value string) bool {
+	// seconds, or HH:MM:SS / MM:SS with optional fraction
+	ok, _ := regexp.MatchString(`^(\d{1,3}(:[0-5]\d){0,2})(\.\d{1,3})?$`, value)
+	return ok && !strings.ContainsAny(value, " \t\n\"';|&")
 }
 
 func getMimeTypeForFormat(format string) string {

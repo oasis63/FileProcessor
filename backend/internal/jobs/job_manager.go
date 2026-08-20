@@ -27,9 +27,14 @@ type JobManager struct {
 	pdfJobQueue    chan string
 	imageJobQueue  chan string
 	mediaJobQueue  chan string
+	concurrency    chan struct{}
 }
 
 func NewJobManager(cfg *config.Config, sm *storage.StorageManager) *JobManager {
+	maxConc := cfg.MaxConcurrentJobs
+	if maxConc < 1 {
+		maxConc = 1
+	}
 	jm := &JobManager{
 		cfg:           cfg,
 		storage:       sm,
@@ -40,9 +45,11 @@ func NewJobManager(cfg *config.Config, sm *storage.StorageManager) *JobManager {
 		pdfJobQueue:   make(chan string, 500),
 		imageJobQueue: make(chan string, 500),
 		mediaJobQueue: make(chan string, 500),
+		concurrency:   make(chan struct{}, maxConc),
 	}
 
 	jm.startWorkers()
+	jm.startJobGC()
 	return jm
 }
 
@@ -69,15 +76,24 @@ func (jm *JobManager) CreateJob(toolID string, files []models.FileMetadata, opti
 	jm.jobs[jobID] = job
 	jm.mu.Unlock()
 
-	// Route job to appropriate queue
 	category := getToolCategory(toolID)
+	var queue chan string
 	switch category {
 	case models.CategoryPDF:
-		jm.pdfJobQueue <- jobID
+		queue = jm.pdfJobQueue
 	case models.CategoryMedia:
-		jm.mediaJobQueue <- jobID
+		queue = jm.mediaJobQueue
 	default:
-		jm.imageJobQueue <- jobID
+		queue = jm.imageJobQueue
+	}
+
+	select {
+	case queue <- jobID:
+	default:
+		jm.mu.Lock()
+		delete(jm.jobs, jobID)
+		jm.mu.Unlock()
+		return nil, fmt.Errorf("processing queue is full, try again shortly")
 	}
 
 	return job, nil
@@ -114,6 +130,9 @@ func (jm *JobManager) workerLoop(workerID int, category models.ToolCategory, que
 }
 
 func (jm *JobManager) processJob(workerID int, category models.ToolCategory, jobID string) {
+	jm.concurrency <- struct{}{}
+	defer func() { <-jm.concurrency }()
+
 	jm.mu.Lock()
 	job, exists := jm.jobs[jobID]
 	if !exists {
@@ -175,6 +194,40 @@ func (jm *JobManager) processJob(workerID int, category models.ToolCategory, job
 
 	log.Printf("[Worker %d] Job %s (%s) COMPLETED in %v | Orig: %d B, Processed: %d B (Saved %.1f%%)",
 		workerID, jobID, job.ToolID, duration, job.OriginalSize, job.ProcessedSize, job.SavingsPct)
+}
+
+func (jm *JobManager) startJobGC() {
+	go func() {
+		ticker := time.NewTicker(5 * time.Minute)
+		defer ticker.Stop()
+		retention := time.Duration(jm.cfg.FileRetentionMins) * time.Minute
+		if retention <= 0 {
+			retention = time.Hour
+		}
+		for range ticker.C {
+			cutoff := time.Now().Add(-retention)
+			jm.mu.Lock()
+			for id, job := range jm.jobs {
+				if job.CreatedAt.Before(cutoff) {
+					delete(jm.jobs, id)
+				}
+			}
+			jm.mu.Unlock()
+		}
+	}()
+}
+
+func IsKnownTool(toolID string) bool {
+	switch toolID {
+	case "compress-pdf", "target-size-pdf", "merge-pdf", "split-pdf", "rotate-pdf",
+		"pdf-to-jpg", "protect-pdf", "remove-pdf-metadata", "extract-pdf-pages", "delete-pdf-pages",
+		"compress-image", "target-size-image", "resize-image", "crop-image", "convert-image",
+		"remove-image-metadata", "image-to-pdf",
+		"video-to-audio", "extract-audio":
+		return true
+	default:
+		return false
+	}
 }
 
 func getToolCategory(toolID string) models.ToolCategory {

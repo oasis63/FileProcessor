@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: true,
+  output: 'standalone',
   async rewrites() {
     const apiHost = process.env.NEXT_PUBLIC_API_URL || "https://fileprocessor-cav6.onrender.com/api/v1";
     return [

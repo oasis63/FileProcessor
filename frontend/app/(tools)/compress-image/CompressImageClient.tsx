@@ -93,6 +93,7 @@ export function CompressImageClient() {
       accept="image/*,.heic"
       optionsComponent={optionsComponent}
       initialOptions={{ quality: 75 }}
+      resolveToolId={(opts) => (opts.mode === 'target' ? 'target-size-image' : 'compress-image')}
       seoContent={{
         howItWorks: [
           { step: 'Drop Image', text: 'Select or drag your JPG, PNG, WebP, or HEIC photo.' },

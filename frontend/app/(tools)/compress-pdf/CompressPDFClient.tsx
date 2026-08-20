@@ -96,6 +96,7 @@ export function CompressPDFClient() {
       accept=".pdf"
       optionsComponent={optionsComponent}
       initialOptions={{ preset: 'ebook' }}
+      resolveToolId={(opts) => (opts.mode === 'target' ? 'target-size-pdf' : 'compress-pdf')}
       seoContent={{
         howItWorks: [
           { step: 'Select PDF', text: 'Upload your PDF document by dragging it into the dropzone.' },

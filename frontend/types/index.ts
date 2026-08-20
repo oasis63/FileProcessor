@@ -1,4 +1,4 @@
-export type ToolCategory = 'PDF' | 'IMAGE';
+export type ToolCategory = 'PDF' | 'IMAGE' | 'MEDIA';
 
 export interface Tool {
   id: string;

@@ -6,7 +6,6 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"strconv"
 	"strings"
 
 	"github.com/fileprocessor/backend/internal/models"
@@ -206,13 +205,12 @@ func (pp *PDFProcessor) Split(ctx context.Context, input models.FileMetadata) (*
 		return nil, err
 	}
 
-	cmd := exec.CommandContext(ctx, "zip", "-j", zipPath, filepath.Join(outDir, "*.pdf"))
-	if output, err := cmd.CombinedOutput(); err != nil {
-		// Fallback to simple file zip or tar if zip CLI absent
-		cmd = exec.CommandContext(ctx, "tar", "-czf", zipPath, "-C", outDir, ".")
-		if errTar := cmd.Run(); errTar != nil {
-			return nil, fmt.Errorf("zip creation failed: %v, log: %s", err, string(output))
-		}
+	matches, err := filepath.Glob(filepath.Join(outDir, "*.pdf"))
+	if err != nil || len(matches) == 0 {
+		return nil, fmt.Errorf("no split pages produced")
+	}
+	if err := zipFiles(ctx, zipPath, matches); err != nil {
+		return nil, err
 	}
 
 	fi, err := os.Stat(zipPath)
@@ -279,12 +277,12 @@ func (pp *PDFProcessor) PDFToJPG(ctx context.Context, input models.FileMetadata)
 		return nil, err
 	}
 
-	cmd = exec.CommandContext(ctx, "zip", "-j", zipPath, filepath.Join(outDir, "*.jpg"))
-	if output, err := cmd.CombinedOutput(); err != nil {
-		cmd = exec.CommandContext(ctx, "tar", "-czf", zipPath, "-C", outDir, ".")
-		if errTar := cmd.Run(); errTar != nil {
-			return nil, fmt.Errorf("zip creation failed: %v, log: %s", err, string(output))
-		}
+	matches, err := filepath.Glob(filepath.Join(outDir, "*.jpg"))
+	if err != nil || len(matches) == 0 {
+		return nil, fmt.Errorf("no JPEG pages produced")
+	}
+	if err := zipFiles(ctx, zipPath, matches); err != nil {
+		return nil, err
 	}
 
 	fi, err := os.Stat(zipPath)
@@ -303,9 +301,13 @@ func (pp *PDFProcessor) PDFToJPG(ctx context.Context, input models.FileMetadata)
 
 // Protect encrypts a PDF with owner and user passwords using pdfcpu.
 func (pp *PDFProcessor) Protect(ctx context.Context, input models.FileMetadata, options models.JobOptions) (*models.FileMetadata, error) {
-	password := "123456"
-	if p, ok := options["password"].(string); ok && p != "" {
-		password = p
+	password, ok := options["password"].(string)
+	password = strings.TrimSpace(password)
+	if !ok || password == "" {
+		return nil, fmt.Errorf("password is required")
+	}
+	if len(password) > 128 {
+		return nil, fmt.Errorf("password is too long")
 	}
 
 	outPath, err := pp.storage.CreateTempFile("protected", ".pdf")
@@ -436,4 +438,15 @@ func (pp *PDFProcessor) DeletePages(ctx context.Context, input models.FileMetada
 	}, nil
 }
 
-var _ = strconv.Itoa
+func zipFiles(ctx context.Context, zipPath string, files []string) error {
+	args := append([]string{"-j", zipPath}, files...)
+	cmd := exec.CommandContext(ctx, "zip", args...)
+	if output, err := cmd.CombinedOutput(); err != nil {
+		dir := filepath.Dir(files[0])
+		cmd = exec.CommandContext(ctx, "tar", "-czf", zipPath, "-C", dir, ".")
+		if errTar := cmd.Run(); errTar != nil {
+			return fmt.Errorf("zip creation failed: %v, log: %s", err, string(output))
+		}
+	}
+	return nil
+}

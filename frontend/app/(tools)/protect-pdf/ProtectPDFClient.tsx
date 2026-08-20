@@ -27,6 +27,12 @@ export function ProtectPDFClient() {
       accept=".pdf"
       optionsComponent={optionsComponent}
       initialOptions={{ password: '' }}
+      validate={(_, opts) => {
+        if (!opts.password || String(opts.password).trim().length < 4) {
+          return 'Enter a password of at least 4 characters';
+        }
+        return null;
+      }}
       seoContent={{
         howItWorks: [
           { step: 'Select PDF', text: 'Choose the PDF you want to password protect.' },

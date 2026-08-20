@@ -12,6 +12,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/fileprocessor/backend/internal/security"
 	"github.com/google/uuid"
 )
 
@@ -40,12 +41,9 @@ func NewStorageManager(baseDir string, retentionMins int) (*StorageManager, erro
 	return sm, nil
 }
 
-func (sm *StorageManager) SaveUploadedFile(r io.Reader, filename string) (string, string, int64, error) {
+func (sm *StorageManager) SaveUploadedFile(r io.Reader, filename string, maxBytes int64) (string, string, int64, error) {
 	fileID := uuid.New().String()
-	ext := filepath.Ext(filename)
-	if ext == "" {
-		ext = ".bin"
-	}
+	ext := security.SafeExtension(filepath.Ext(filename))
 	storedName := fmt.Sprintf("%s%s", fileID, ext)
 	targetPath := filepath.Join(sm.baseDir, storedName)
 
@@ -55,10 +53,15 @@ func (sm *StorageManager) SaveUploadedFile(r io.Reader, filename string) (string
 	}
 	defer out.Close()
 
-	nBytes, err := io.Copy(out, r)
+	limited := io.LimitReader(r, maxBytes+1)
+	nBytes, err := io.Copy(out, limited)
 	if err != nil {
 		os.Remove(targetPath)
 		return "", "", 0, err
+	}
+	if nBytes > maxBytes {
+		os.Remove(targetPath)
+		return "", "", 0, fmt.Errorf("%w", security.ErrFileTooLarge)
 	}
 
 	sm.mu.Lock()
@@ -70,9 +73,8 @@ func (sm *StorageManager) SaveUploadedFile(r io.Reader, filename string) (string
 
 func (sm *StorageManager) CreateTempFile(prefix, ext string) (string, error) {
 	fileID := uuid.New().String()
-	if ext == "" {
-		ext = ".tmp"
-	}
+	ext = security.SafeExtension(ext)
+	prefix = security.SanitizeFilename(prefix)
 	storedName := fmt.Sprintf("%s_%s%s", prefix, fileID, ext)
 	targetPath := filepath.Join(sm.baseDir, storedName)
 
@@ -93,8 +95,9 @@ func (sm *StorageManager) GetFilePathByID(fileID string) (string, error) {
 	}
 
 	for _, entry := range entries {
-		if strings.HasPrefix(entry.Name(), fileID) {
-			return filepath.Join(sm.baseDir, entry.Name()), nil
+		name := entry.Name()
+		if name == fileID || strings.HasPrefix(name, fileID+".") {
+			return filepath.Join(sm.baseDir, name), nil
 		}
 	}
 	return "", fmt.Errorf("file not found for ID: %s", fileID)
@@ -121,16 +124,25 @@ func (sm *StorageManager) GenerateDownloadToken(fileID string, expiryMinutes int
 }
 
 func (sm *StorageManager) VerifyDownloadToken(token string) (string, bool) {
-	var fileID string
-	var expiresAt int64
-	var sig string
+	parts := strings.Split(token, ".")
+	if len(parts) != 3 {
+		return "", false
+	}
+	fileID, expiryStr, sig := parts[0], parts[1], parts[2]
 
-	_, err := fmt.Sscanf(token, "%s.%d.%s", &fileID, &expiresAt, &sig)
-	if err != nil {
+	var expiresAt int64
+	if _, err := fmt.Sscanf(expiryStr, "%d", &expiresAt); err != nil {
+		return "", false
+	}
+	if time.Now().Unix() > expiresAt {
 		return "", false
 	}
 
-	if time.Now().Unix() > expiresAt {
+	msg := fmt.Sprintf("%s:%d", fileID, expiresAt)
+	h := hmac.New(sha256.New, sm.secretKey)
+	h.Write([]byte(msg))
+	expected := hex.EncodeToString(h.Sum(nil))
+	if !hmac.Equal([]byte(expected), []byte(sig)) {
 		return "", false
 	}
 
