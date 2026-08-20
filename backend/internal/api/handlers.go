@@ -54,6 +54,7 @@ func (h *APIHandler) ListTools(w http.ResponseWriter, r *http.Request) {
 		{ID: "convert-image", Name: "Convert Image Format", Category: models.CategoryImage, Description: "Convert between JPG, PNG, WebP, HEIC formats", SupportedInputFormats: []string{"jpg", "jpeg", "png", "webp", "heic"}, SupportedOutputFormats: []string{"jpg", "png", "webp"}},
 		{ID: "remove-image-metadata", Name: "Remove Image Metadata", Category: models.CategoryImage, Description: "Strip EXIF, GPS location, and camera data from images", SupportedInputFormats: []string{"jpg", "jpeg", "png", "webp", "heic"}, SupportedOutputFormats: []string{"jpg", "png", "webp"}},
 		{ID: "image-to-pdf", Name: "Image to PDF", Category: models.CategoryImage, Description: "Convert JPG, PNG, WebP images into a single PDF", SupportedInputFormats: []string{"jpg", "jpeg", "png", "webp"}, SupportedOutputFormats: []string{"pdf"}},
+		{ID: "video-to-audio", Name: "Video to Audio", Category: models.CategoryMedia, Description: "Extract high-quality audio or MP3 from video files", SupportedInputFormats: []string{"mp4", "mov", "avi", "mkv", "webm", "flv", "wmv", "3gp"}, SupportedOutputFormats: []string{"mp3", "wav", "aac", "m4a", "flac", "ogg"}},
 	}
 
 	respondJSON(w, http.StatusOK, map[string]interface{}{"tools": tools})
@@ -93,7 +94,8 @@ func (h *APIHandler) UploadFile(w http.ResponseWriter, r *http.Request) {
 		}
 
 		// Magic byte detection
-		mimeType, _ := security.ValidateMagicBytes(storedPath, []string{"pdf", "jpg", "jpeg", "png", "webp", "heic"})
+		allowedFormats := []string{"pdf", "jpg", "jpeg", "png", "webp", "heic", "mp4", "mov", "avi", "mkv", "webm", "flv", "wmv", "3gp", "mp3", "wav", "aac", "m4a", "ogg", "flac"}
+		mimeType, _ := security.ValidateMagicBytes(storedPath, allowedFormats)
 
 		uploadedMetas = append(uploadedMetas, models.FileMetadata{
 			ID:           fileID,

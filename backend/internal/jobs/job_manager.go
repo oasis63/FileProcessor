@@ -10,6 +10,7 @@ import (
 	"github.com/fileprocessor/backend/internal/config"
 	"github.com/fileprocessor/backend/internal/models"
 	"github.com/fileprocessor/backend/internal/processors/image"
+	"github.com/fileprocessor/backend/internal/processors/media"
 	"github.com/fileprocessor/backend/internal/processors/pdf"
 	"github.com/fileprocessor/backend/internal/storage"
 	"github.com/google/uuid"
@@ -20,10 +21,12 @@ type JobManager struct {
 	storage        *storage.StorageManager
 	pdfProc        *pdf.PDFProcessor
 	imageProc      *image.ImageProcessor
+	mediaProc      *media.MediaProcessor
 	mu             sync.RWMutex
 	jobs           map[string]*models.Job
 	pdfJobQueue    chan string
 	imageJobQueue  chan string
+	mediaJobQueue  chan string
 }
 
 func NewJobManager(cfg *config.Config, sm *storage.StorageManager) *JobManager {
@@ -32,9 +35,11 @@ func NewJobManager(cfg *config.Config, sm *storage.StorageManager) *JobManager {
 		storage:       sm,
 		pdfProc:       pdf.NewPDFProcessor(sm),
 		imageProc:     image.NewImageProcessor(sm),
+		mediaProc:     media.NewMediaProcessor(sm),
 		jobs:          make(map[string]*models.Job),
 		pdfJobQueue:   make(chan string, 500),
 		imageJobQueue: make(chan string, 500),
+		mediaJobQueue: make(chan string, 500),
 	}
 
 	jm.startWorkers()
@@ -66,9 +71,12 @@ func (jm *JobManager) CreateJob(toolID string, files []models.FileMetadata, opti
 
 	// Route job to appropriate queue
 	category := getToolCategory(toolID)
-	if category == models.CategoryPDF {
+	switch category {
+	case models.CategoryPDF:
 		jm.pdfJobQueue <- jobID
-	} else {
+	case models.CategoryMedia:
+		jm.mediaJobQueue <- jobID
+	default:
 		jm.imageJobQueue <- jobID
 	}
 
@@ -91,6 +99,11 @@ func (jm *JobManager) startWorkers() {
 	// Start Image Worker Pool
 	for i := 0; i < jm.cfg.ImageWorkers; i++ {
 		go jm.workerLoop(i, models.CategoryImage, jm.imageJobQueue)
+	}
+
+	// Start Media Worker Pool
+	for i := 0; i < jm.cfg.MediaWorkers; i++ {
+		go jm.workerLoop(i, models.CategoryMedia, jm.mediaJobQueue)
 	}
 }
 
@@ -120,9 +133,12 @@ func (jm *JobManager) processJob(workerID int, category models.ToolCategory, job
 	var output *models.FileMetadata
 	var err error
 
-	if category == models.CategoryPDF {
+	switch category {
+	case models.CategoryPDF:
 		output, err = jm.pdfProc.Process(ctx, job)
-	} else {
+	case models.CategoryMedia:
+		output, err = jm.mediaProc.Process(ctx, job)
+	default:
 		output, err = jm.imageProc.Process(ctx, job)
 	}
 
@@ -166,6 +182,8 @@ func getToolCategory(toolID string) models.ToolCategory {
 	case "compress-pdf", "target-size-pdf", "merge-pdf", "split-pdf", "rotate-pdf",
 		"pdf-to-jpg", "protect-pdf", "remove-pdf-metadata", "extract-pdf-pages", "delete-pdf-pages":
 		return models.CategoryPDF
+	case "video-to-audio", "extract-audio":
+		return models.CategoryMedia
 	default:
 		return models.CategoryImage
 	}

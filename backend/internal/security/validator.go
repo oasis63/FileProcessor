@@ -65,6 +65,14 @@ func ValidateMagicBytes(filePath string, allowedFormats []string) (string, error
 			if contentType == "image/heic" || contentType == "image/heif" || strings.Contains(contentType, "octet-stream") {
 				matched = true
 			}
+		case "mp4", "m4v", "mov", "avi", "mkv", "webm", "flv", "wmv", "3gp":
+			if strings.HasPrefix(contentType, "video/") || strings.Contains(contentType, "mp4") || strings.Contains(contentType, "octet-stream") || strings.Contains(contentType, "matroska") || strings.Contains(contentType, "quicktime") {
+				matched = true
+			}
+		case "mp3", "wav", "aac", "m4a", "ogg", "flac":
+			if strings.HasPrefix(contentType, "audio/") || strings.Contains(contentType, "octet-stream") {
+				matched = true
+			}
 		}
 	}
 

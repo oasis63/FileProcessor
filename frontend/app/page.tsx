@@ -17,7 +17,9 @@ import {
   Sparkles,
   FileStack,
   Crop,
-  Layers
+  Layers,
+  Headphones,
+  Video
 } from 'lucide-react';
 import { FileDropzone } from '@/components/upload/FileDropzone';
 
@@ -31,6 +33,8 @@ export default function HomePage() {
       const first = files[0];
       if (first.type.includes('pdf')) {
         router.push('/compress-pdf');
+      } else if (first.type.includes('video') || /\.(mp4|mov|avi|mkv|webm|flv|wmv|3gp)$/i.test(first.name)) {
+        router.push('/video-to-audio');
       } else {
         router.push('/compress-image');
       }
@@ -55,6 +59,10 @@ export default function HomePage() {
     { title: 'Image to PDF', desc: 'Convert images into a clean PDF document', icon: FileStack, href: '/jpg-to-pdf' },
   ];
 
+  const mediaTools = [
+    { title: 'Video to Audio', desc: 'Extract high-quality MP3, WAV, or AAC audio from video files', icon: Headphones, href: '/video-to-audio', badge: 'NEW' },
+  ];
+
   return (
     <div className="space-y-20 pb-20">
       {/* Hero Section */}
@@ -69,13 +77,13 @@ export default function HomePage() {
           </h1>
 
           <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
-            Solve any PDF or image task in seconds. Ultra-fast, private, and simple.
+            Solve any PDF, image, or video conversion task in seconds. Ultra-fast, private, and simple.
           </p>
 
           {/* Quick Upload Dropzone */}
           <div className="max-w-3xl mx-auto">
             <FileDropzone
-              accept=".pdf,.jpg,.jpeg,.png,.webp,.heic"
+              accept=".pdf,.jpg,.jpeg,.png,.webp,.heic,.mp4,.mov,.avi,.mkv,.webm,.flv,.wmv"
               multiple={true}
               files={droppedFiles}
               onFilesSelected={handleFilesDropped}
@@ -187,6 +195,57 @@ export default function HomePage() {
               </div>
 
               <div className="mt-6 flex items-center text-xs font-semibold text-blue-600 dark:text-blue-400 group-hover:translate-x-1 transition-transform">
+                Open Tool <ArrowRight className="w-3.5 h-3.5 ml-1" />
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      {/* Media Tools Section */}
+      <section id="media-tools" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-800 pb-4">
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-xl bg-purple-500/10 text-purple-500 flex items-center justify-center">
+              <Video className="w-5 h-5" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Media & Audio Tools</h2>
+              <p className="text-xs text-gray-500 dark:text-gray-400">Extract audio, convert video formats, and optimize sound tracks</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {mediaTools.map((tool, idx) => (
+            <Link
+              key={idx}
+              href={tool.href}
+              className="group p-6 rounded-2xl border border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 hover:border-purple-500 dark:hover:border-purple-500 hover:shadow-xl transition-all duration-200 flex flex-col justify-between"
+            >
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="w-12 h-12 rounded-xl bg-purple-50 dark:bg-gray-800 text-purple-600 dark:text-purple-400 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <tool.icon className="w-6 h-6" />
+                  </div>
+                  {tool.badge && (
+                    <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-purple-100 dark:bg-purple-900/60 text-purple-600 dark:text-purple-300">
+                      {tool.badge}
+                    </span>
+                  )}
+                </div>
+
+                <div>
+                  <h3 className="text-lg font-bold text-gray-900 dark:text-white group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+                    {tool.title}
+                  </h3>
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 leading-relaxed">
+                    {tool.desc}
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-6 flex items-center text-xs font-semibold text-purple-600 dark:text-purple-400 group-hover:translate-x-1 transition-transform">
                 Open Tool <ArrowRight className="w-3.5 h-3.5 ml-1" />
               </div>
             </Link>
