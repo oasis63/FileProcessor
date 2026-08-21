@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import { Source_Sans_3 } from 'next/font/google';
-import { Analytics } from '@vercel/analytics/react';
+import { Analytics } from '@vercel/analytics/next';
 import '@/styles/globals.css';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
