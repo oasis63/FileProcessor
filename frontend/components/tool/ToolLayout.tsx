@@ -288,6 +288,9 @@ export function ToolLayout({
               </div>
             ))}
           </div>
+        </div>
+      )}
+
       {related.length > 0 && (
         <div className="pt-8 space-y-3">
           <h2 className="font-display text-2xl text-ink dark:text-paper">Related tools</h2>
